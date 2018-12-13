@@ -4,5 +4,8 @@
   "main": "./dist/index.js",
   "repository": {
     "url": "https://github.com/nripendra/axonish"
+  },
+  "dependencies": {
+    "apollo-server-express": "^2.2.6"
   }
 }
