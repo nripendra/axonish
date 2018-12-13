@@ -1,0 +1,19 @@
+{
+  "name": "axonish",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/nripendra/axonish"
+  },
+  "workspaces": [
+    "@axonish/*"
+  ],
+  "scripts": {
+    "build": "tsc -b ./@axonish"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  }
+}

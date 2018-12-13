@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true
+  },
+  "exclude": ["**/*"],
+  "references": [{ "path": "./core/" }, { "path": "./cqrs/" }]
+}

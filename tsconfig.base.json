@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "lib": ["dom", "esnext", "es2015", "es2016"],
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "baseUrl": ".",
+    "composite": true,
+    "paths": {
+      "@axonish/*": ["./@axonish/*/src"]
+    }
+  }
+}
