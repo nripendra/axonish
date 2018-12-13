@@ -1,0 +1,1 @@
+Here I'll be dumping all my thoughts about how I'll be proceeding with axonish development and design.
