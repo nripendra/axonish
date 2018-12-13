@@ -2,7 +2,7 @@
 
 Axonish is a nodejs microservice framework implemented in typescript. The goal is to implement developer friendly Cqrs and eventsourcing
 framework, with graphql api front-end. The name "axonish" is derived from [axon](https://axoniq.io/) framework. Although, it is not a nodejs
-port for [axon](https://axoniq.io/), the initial inspiration came after going throug the axon docs.
+port for [axon](https://axoniq.io/), the initial inspiration came after going through the axon docs.
 
 Axonish itself is an amalgamation of lots of libraries and their dependencies, to name major ones:
 
@@ -44,4 +44,14 @@ Now, clone the monorepo from https://github.com/nripendra/axonish
 
 ```
 git clone https://github.com/nripendra/axonish.git
+```
+
+Now, run the yarn commands as follows:
+
+```
+yarn
+```
+
+```
+yarn build
 ```
