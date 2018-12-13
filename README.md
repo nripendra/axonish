@@ -55,3 +55,9 @@ yarn
 ```
 yarn build
 ```
+
+Execute tests with following command:
+
+```
+yarn test
+```

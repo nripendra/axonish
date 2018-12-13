@@ -10,7 +10,8 @@
     "@axonish/*"
   ],
   "scripts": {
-    "build": "tsc -b ./@axonish"
+    "build": "tsc -b ./@axonish",
+    "test": "ts-node --project ./tsconfig.base.json ./run-specs.ts"
   },
   "dependencies": {
     "alsatian": "^2.3.0"
