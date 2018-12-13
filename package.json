@@ -12,7 +12,9 @@
   "scripts": {
     "build": "tsc -b ./@axonish"
   },
-  "dependencies": {},
+  "dependencies": {
+    "alsatian": "^2.3.0"
+  },
   "devDependencies": {
     "typescript": "^3.2.2"
   }

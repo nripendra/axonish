@@ -1,7 +1,7 @@
 import IApiConfiguration from "./IApiConfiguration";
 import { ApolloServer } from "apollo-server-express";
 
-type ServerStartedInfo = { address: string; port: string | number };
+export type ServerStartedInfo = { address: string; port: string | number };
 
 export default interface IApiStartup {
   config(appConfig: IApiConfiguration): void | Promise<any>;
