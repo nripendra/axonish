@@ -162,4 +162,52 @@ export class AxonishApiSpecs {
     );
     Expect(response.books[0].author).toBe("J.K. Rowling");
   }
+
+  @AsyncTest(`Ability to change port`)
+  async changePort() {
+    let server: unknown = null;
+    let serverStartedInfo: ServerStartedInfo | null = null;
+    function isApiConfig(arg: any): arg is IApiConfiguration {
+      return (arg as IApiConfiguration).setPort !== undefined;
+    }
+    @AxonishApi()
+    class TestApi implements IApiStartup {
+      async config(apiConfig: IApiConfiguration): Promise<any> {
+        await Promise.resolve();
+        apiConfig.setPort(3005);
+      }
+      async starting(graphqlServer: AxonishApolloServer): Promise<void> {
+        await Promise.resolve();
+      }
+      async started(
+        graphqlServer: AxonishApolloServer,
+        info: ServerStartedInfo
+      ) {
+        await Promise.resolve();
+        server = graphqlServer;
+        serverStartedInfo = info;
+      }
+      onError(err: any): void {}
+    }
+    await __AxonishApiAwaitForUnitTest();
+    Expect(server instanceof ApolloServer).toBe(true);
+    Expect((server as AxonishApolloServer).express).toBeDefined();
+    Expect(serverStartedInfo).not.toBeNull();
+    Expect((serverStartedInfo! as ServerStartedInfo).port).toBe(3005);
+    const response = await gqlFetch<Books>(
+      (serverStartedInfo! as ServerStartedInfo).port as number,
+      `{
+      books {
+        title,
+        author
+      }
+    }`
+    );
+    await (server as AxonishApolloServer).stop();
+    Expect(response.books.length).toBe(2);
+    Expect(response.books[0].title).toBe(
+      "Harry Potter and the Chamber of Secrets"
+    );
+    Expect(response.books[0].author).toBe("J.K. Rowling");
+  }
 }

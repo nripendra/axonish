@@ -49,8 +49,10 @@ export function AxonishApi(): AxonishApiReturnType {
         await startingResult;
       }
 
+      const { port } = config;
+
       await new Promise(function(resolve) {
-        const expressServer = app.listen({ port: 3000 }, () => {
+        const expressServer = app.listen({ port }, () => {
           apolloServer.stop = () => {
             return new Promise(async function(resolve) {
               await oldStop.apply(apolloServer);
@@ -63,7 +65,7 @@ export function AxonishApi(): AxonishApiReturnType {
 
       const startedResult = instance.started(apolloServer, {
         address: "localhost",
-        port: 3000
+        port
       });
       if (startedResult && startedResult.then) {
         await startedResult;
