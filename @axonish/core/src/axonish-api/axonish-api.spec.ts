@@ -6,9 +6,9 @@ import {
 } from ".";
 import IApiStartup, { ServerStartedInfo } from "../interfaces/IApiStartup";
 import IApiConfiguration from "../interfaces/IApiConfiguration";
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer, gql, makeExecutableSchema } from "apollo-server-express";
 import { gqlFetch } from "../test-utils/gql-fetch";
-import { Books } from "./default-types";
+import { Books } from "../test-utils/default-types";
 @TestFixture()
 export class AxonishApiSpecs {
   @AsyncTest(`Call lifecycle functions in following order:
@@ -209,5 +209,81 @@ export class AxonishApiSpecs {
       "Harry Potter and the Chamber of Secrets"
     );
     Expect(response.books[0].author).toBe("J.K. Rowling");
+  }
+
+  @AsyncTest(`possibility of setting custom schema`)
+  async customSchema() {
+    let server: AxonishApolloServer | null = null;
+    type Contact = {
+      name: string;
+      phone: string;
+    };
+    type Contacts = { contacts: Contact[] };
+    @AxonishApi()
+    class TestApi implements IApiStartup {
+      async config(apiConfig: IApiConfiguration): Promise<any> {
+        const contacts: Contact[] = [
+          {
+            name: "Harry Potter",
+            phone: "123456789"
+          },
+          {
+            name: "Michael Crichton",
+            phone: "12432345"
+          }
+        ];
+
+        // Type definitions define the "shape" of your data and specify
+        // which ways the data can be fetched from the GraphQL server.
+        const typeDefs = gql`
+          # Comments in GraphQL are defined with the hash (#) symbol.
+          # This "Book" type can be used in other type declarations.
+          type Contact {
+            name: String
+            phone: String
+          }
+
+          # The "Query" type is the root of all GraphQL queries.
+          # (A "Mutation" type will be covered later on.)
+          type Query {
+            contacts: [Contact]
+          }
+        `;
+
+        // Resolvers define the technique for fetching the types in the
+        // schema.  We'll retrieve books from the "books" array above.
+        const resolvers = {
+          Query: {
+            contacts: () => contacts
+          }
+        };
+        apiConfig.setSchema(makeExecutableSchema({ typeDefs, resolvers }));
+      }
+      async starting(graphqlServer: AxonishApolloServer): Promise<void> {
+        await Promise.resolve();
+      }
+      async started(
+        graphqlServer: AxonishApolloServer,
+        info: ServerStartedInfo
+      ) {
+        server = graphqlServer;
+      }
+      onError(err: any): void {}
+    }
+    await __AxonishApiAwaitForUnitTest();
+
+    const response = await gqlFetch<Contacts>(
+      3000,
+      `{
+        contacts {
+          name,
+          phone
+        }
+      }`
+    );
+    await server!.stop();
+    Expect(response.contacts.length).toBe(2);
+    Expect(response.contacts[0].name).toBe("Harry Potter");
+    Expect(response.contacts[0].phone).toBe("123456789");
   }
 }

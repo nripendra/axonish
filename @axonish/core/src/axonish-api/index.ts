@@ -5,7 +5,9 @@ import * as express from "express";
 import {
   typeDefs as exampleTypeDefs,
   resolvers as exampleResolvers
-} from "./default-types";
+} from "../test-utils/default-types";
+
+import "reflect-metadata";
 
 type ClassOf<T> = {
   new (...args: any[]): T;
@@ -32,10 +34,12 @@ export function AxonishApi(): AxonishApiReturnType {
         await configResult;
       }
       const server = new ApolloServer({
-        schema: makeExecutableSchema({
-          typeDefs: exampleTypeDefs,
-          resolvers: exampleResolvers
-        })
+        schema:
+          config.schema ||
+          makeExecutableSchema({
+            typeDefs: exampleTypeDefs,
+            resolvers: exampleResolvers
+          })
       });
       const app = express();
       (server as AxonishApolloServer).express = app;
