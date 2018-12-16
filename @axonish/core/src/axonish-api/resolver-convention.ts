@@ -37,6 +37,15 @@ export async function resolverConvention(apiConfig: IApiConfiguration) {
   }
 }
 
+export function setGlobOptions(options: {
+  cwd?: string;
+  ignore?: string | string[];
+}) {
+  if (options) {
+    _defaultOptions = options;
+  }
+}
+
 export function __ClearVisitedGlobsForUnitTest() {
   for (const key in visitedGlobs) {
     delete visitedGlobs[key];
