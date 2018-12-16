@@ -60,3 +60,7 @@ Will have following members
 
 - `setPort(portNumber: number)`
   Set the port number on which we need to run the graphql server on. Default will be 3000 (Can change in future)
+- `setSchema(schema: GraphQLSchema): void;`
+  Set an "executable" graphql schema that should be served. Note that, executable schema means type defs and resolvers.
+- `addConvention(convention: ApiConvention): void;`
+  Support for user-defined conventions. As of now, there is only built in convention: the `resolver-convention`.
