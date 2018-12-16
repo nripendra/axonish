@@ -9,11 +9,9 @@ import {
 
 import "reflect-metadata";
 import { resolverConvention } from "./resolver-convention";
+import { ClassOf } from "../common";
 
-type ClassOf<T> = {
-  new (...args: any[]): T;
-};
-type AxonishApiReturnType = (constructor: ClassOf<IApiStartup>) => void;
+export type AxonishApiReturnType = (constructor: ClassOf<IApiStartup>) => void;
 export type AxonishApolloServer = ApolloServer & { express: express.Express };
 
 /**
