@@ -317,7 +317,6 @@ export class AxonishApiSpecs {
     Expect(conventionCalled).toBe(true);
   }
 
-  @Timeout(100000)
   @AsyncTest("resolver-convention should figure out type-graphql resolvers")
   async checkResolverConvention() {
     __ClearVisitedGlobsForUnitTest();

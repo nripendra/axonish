@@ -8,8 +8,9 @@ import {
 } from "../test-utils/default-types";
 
 import "reflect-metadata";
-import { resolverConvention } from "./resolver-convention";
+import { resolverConvention, setGlobOptions } from "./resolver-convention";
 import { ClassOf } from "../common";
+import * as path from "path";
 
 export type AxonishApiReturnType = (constructor: ClassOf<IApiStartup>) => void;
 export type AxonishApolloServer = ApolloServer & { express: express.Express };
@@ -28,6 +29,11 @@ export function AxonishApi(): AxonishApiReturnType {
     const instance = new ApiStartupClass();
     _initilizingApiPromise = (async () => {
       const config = new ApiConfig();
+      const requiring_module = module.parent!.filename;
+      setGlobOptions({
+        cwd: path.dirname(requiring_module),
+        ignore: ["**/**/*.d.ts", "**/**/*.map", "**/node_modules/", "**/dist/"]
+      });
       config.addConvention(resolverConvention);
       const configResult = instance.config(config);
       if (configResult && configResult.then) {
