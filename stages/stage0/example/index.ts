@@ -4,7 +4,7 @@ import IApiConfiguration from "@axonish/core/src/interfaces/IApiConfiguration";
 
 @AxonishApi()
 export class MyShopApiGateWay implements IApiStartup {
-  config(appConfig: IApiConfiguration): void | Promise<any> {}
+  config(appConfig: IApiConfiguration): void | Promise<void> {}
 
   starting(graphqlServer: AxonishApolloServer): void {}
 

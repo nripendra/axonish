@@ -4,7 +4,7 @@ import { AxonishApolloServer } from "../axonish-api";
 export type ServerStartedInfo = { address: string; port: string | number };
 
 export default interface IApiStartup {
-  config(apiConfig: IApiConfiguration): void | Promise<any>;
+  config(apiConfig: IApiConfiguration): void | Promise<void>;
 
   starting(graphqlServer: AxonishApolloServer): void | Promise<void>;
 
