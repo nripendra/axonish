@@ -1,4 +1,4 @@
-import { TestFixture, Test, Expect, AsyncTest } from "alsatian";
+import { TestFixture, Test, Expect, AsyncTest, Timeout } from "alsatian";
 import {
   AxonishApi,
   __AxonishApiAwaitForUnitTest,
@@ -9,6 +9,10 @@ import IApiConfiguration from "../interfaces/IApiConfiguration";
 import { ApolloServer, gql, makeExecutableSchema } from "apollo-server-express";
 import { gqlFetch } from "../test-utils/gql-fetch";
 import { Books } from "../test-utils/default-types";
+import {
+  __InjectConventionsForUnitTest,
+  __ClearVisitedGlobsForUnitTest
+} from "./resolver-convention";
 @TestFixture()
 export class AxonishApiSpecs {
   @AsyncTest(`Call lifecycle functions in following order:
@@ -285,5 +289,68 @@ export class AxonishApiSpecs {
     Expect(response.contacts.length).toBe(2);
     Expect(response.contacts[0].name).toBe("Harry Potter");
     Expect(response.contacts[0].phone).toBe("123456789");
+  }
+
+  @AsyncTest(`possibility to add convention`)
+  async convention() {
+    let conventionCalled: boolean = false;
+    const customConvention = (apiConfig: IApiConfiguration) => {
+      conventionCalled = true;
+    };
+    @AxonishApi()
+    class TestApi implements IApiStartup {
+      async config(apiConfig: IApiConfiguration): Promise<any> {
+        apiConfig.addConvention(customConvention);
+      }
+      async starting(graphqlServer: AxonishApolloServer): Promise<void> {
+        await Promise.resolve();
+      }
+      async started(
+        graphqlServer: AxonishApolloServer,
+        info: ServerStartedInfo
+      ) {
+        await graphqlServer.stop();
+      }
+      onError(err: any): void {}
+    }
+    await __AxonishApiAwaitForUnitTest();
+    Expect(conventionCalled).toBe(true);
+  }
+
+  @Timeout(100000)
+  @AsyncTest("resolver-convention should figure out type-graphql resolvers")
+  async checkResolverConvention() {
+    __ClearVisitedGlobsForUnitTest();
+    __InjectConventionsForUnitTest(
+      ["../test-utils/hello-resolvers/*.resolver.{ts,js}"],
+      {
+        cwd: __dirname,
+        ignore: ["**/**/*.d.ts", "**/**/*.map", "**/node_modules/", "**/dist/"]
+      }
+    );
+    let server: AxonishApolloServer | null = null;
+    @AxonishApi()
+    class TestApi implements IApiStartup {
+      async config(apiConfig: IApiConfiguration): Promise<any> {}
+      async starting(graphqlServer: AxonishApolloServer): Promise<void> {
+        await Promise.resolve();
+      }
+      async started(
+        graphqlServer: AxonishApolloServer,
+        info: ServerStartedInfo
+      ) {
+        server = graphqlServer;
+      }
+      onError(err: any): void {}
+    }
+    await __AxonishApiAwaitForUnitTest();
+    const response = await gqlFetch<{ hello: string }>(
+      3000,
+      `{
+        hello(arg:"World")
+      }`
+    );
+    Expect(response.hello).toBe("Hello World");
+    await server!.stop();
   }
 }

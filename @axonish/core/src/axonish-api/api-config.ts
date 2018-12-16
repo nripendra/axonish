@@ -1,5 +1,6 @@
 import IApiConfiguration from "../interfaces/IApiConfiguration";
 import { GraphQLSchema } from "graphql";
+import { ApiConvention } from "./api-convention";
 export class ApiConfig implements IApiConfiguration {
   private _port: number = 3000;
   get port() {
@@ -15,5 +16,12 @@ export class ApiConfig implements IApiConfiguration {
   }
   setSchema(schema: GraphQLSchema): void {
     this._schema = schema;
+  }
+  private _conventions: ApiConvention[] = [];
+  get conventions(): ReadonlyArray<ApiConvention> {
+    return [...this._conventions];
+  }
+  addConvention(convention: ApiConvention): void {
+    this._conventions.push(convention);
   }
 }

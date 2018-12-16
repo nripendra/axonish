@@ -8,6 +8,7 @@ import {
 } from "../test-utils/default-types";
 
 import "reflect-metadata";
+import { resolverConvention } from "./resolver-convention";
 
 type ClassOf<T> = {
   new (...args: any[]): T;
@@ -29,9 +30,16 @@ export function AxonishApi(): AxonishApiReturnType {
     const instance = new ApiStartupClass();
     _initilizingApiPromise = (async () => {
       const config = new ApiConfig();
+      config.addConvention(resolverConvention);
       const configResult = instance.config(config);
       if (configResult && configResult.then) {
         await configResult;
+      }
+      for (const convention of config.conventions) {
+        const conventionResult = convention(config);
+        if (conventionResult && conventionResult.then) {
+          await conventionResult;
+        }
       }
       const server = new ApolloServer({
         schema:
