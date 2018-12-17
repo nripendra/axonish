@@ -39,7 +39,7 @@ const responder = new MessageResponder("Test-Channel");
 responder.on(CreateTest({ message: "" }), async message => {
   return {
     success: true,
-    received: message.payload.message
+    received: message.payload!.message
   };
 });
 

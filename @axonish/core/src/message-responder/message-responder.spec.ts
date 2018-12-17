@@ -12,7 +12,7 @@ export class MessageResponderTests {
     responder.on(TestCommand(), (message: TestCommandType) => {
       return Promise.resolve({
         success: true,
-        received: message.payload.message
+        received: message.payload!.message
       });
     });
     const bus = new MessageBus();
