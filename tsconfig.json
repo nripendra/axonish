@@ -10,6 +10,7 @@
     "strict": true,
     "baseUrl": ".",
     "composite": true,
+    "skipLibCheck": true,
     "paths": {
       "@axonish/*": ["./@axonish/*/src"]
     }
