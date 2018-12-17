@@ -1,1 +1,1 @@
-console.log("hello world");
+export { Message } from "./common/message";

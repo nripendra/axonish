@@ -1,7 +1,11 @@
 {
   "name": "@axonish/cqrs",
-  "version": "0.1.0",
   "repository": {
     "url": "https://github.com/nripendra/axonish"
+  },
+  "license": "MIT",
+  "version": "0.1.0",
+  "dependencies": {
+    "@axonish/core": "0.1.0"
   }
 }

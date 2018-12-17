@@ -17,8 +17,5 @@
     "reflect-metadata": "^0.1.12",
     "type-graphql": "^0.15.0",
     "typedi": "^0.8.0"
-  },
-  "peerDependencies": {
-    "type-graphql": "^0.15.0"
   }
 }

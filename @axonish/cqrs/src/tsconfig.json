@@ -1,8 +1,11 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    "target": "es2015",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "lib": ["dom", "esnext", "es2015", "es2016"]
   },
   "include": ["**/*.ts"],
-  "exclude": ["**/node_modules"]
+  "exclude": ["**/node_modules", "**/*.d.ts"]
 }
