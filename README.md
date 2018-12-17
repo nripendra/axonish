@@ -33,6 +33,7 @@ You'll need to install following:
 - [yarn](https://yarnpkg.com/lang/en/docs/install/)
 - [git](https://git-scm.com/downloads)
 - [prettier-vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [ts-node](https://github.com/TypeStrong/ts-node#installation)
 
 Now install [typescript](https://www.typescriptlang.org/)
 
