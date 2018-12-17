@@ -1,6 +1,7 @@
 import IApiConfiguration from "../interfaces/IApiConfiguration";
 import { GraphQLSchema } from "graphql";
 import { ApiConvention } from "./api-convention";
+import Container from "typedi";
 export class ApiConfig implements IApiConfiguration {
   private _port: number = 3000;
   get port() {
@@ -23,5 +24,9 @@ export class ApiConfig implements IApiConfiguration {
   }
   addConvention(convention: ApiConvention): void {
     this._conventions.push(convention);
+  }
+
+  get services(): typeof Container {
+    return Container;
   }
 }

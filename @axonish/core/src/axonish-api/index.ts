@@ -11,10 +11,15 @@ import "reflect-metadata";
 import { resolverConvention, setGlobOptions } from "./resolver-convention";
 import { ClassOf } from "../common";
 import * as path from "path";
+import { useContainer } from "type-graphql";
+import { Container } from "typedi";
+import { MessageBusService } from "../tokens";
+import { MessageBus } from "../message-bus";
 
 export type AxonishApiReturnType = (constructor: ClassOf<IApiStartup>) => void;
 export type AxonishApolloServer = ApolloServer & { express: express.Express };
 
+useContainer(Container);
 /**
  * HACK!! Just for awaiting in Unit tests.
  */
@@ -29,6 +34,7 @@ export function AxonishApi(): AxonishApiReturnType {
     const instance = new ApiStartupClass();
     _initilizingApiPromise = (async () => {
       const config = new ApiConfig();
+      config.services.set(MessageBusService, new MessageBus());
       const requiring_module = module.parent!.filename;
       setGlobOptions({
         cwd: path.dirname(requiring_module),
