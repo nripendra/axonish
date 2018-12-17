@@ -13,7 +13,7 @@ import { ClassOf } from "../common";
 import * as path from "path";
 import { useContainer } from "type-graphql";
 import { Container } from "typedi";
-import { MessageBusService } from "../tokens";
+import { MessageBusToken, ApiConfigurationToken } from "../tokens";
 import { MessageBus } from "../message-bus";
 
 export type AxonishApiReturnType = (constructor: ClassOf<IApiStartup>) => void;
@@ -34,7 +34,8 @@ export function AxonishApi(): AxonishApiReturnType {
     const instance = new ApiStartupClass();
     _initilizingApiPromise = (async () => {
       const config = new ApiConfig();
-      config.services.set(MessageBusService, new MessageBus());
+      config.services.set(MessageBusToken, new MessageBus());
+      config.services.set(ApiConfigurationToken, config);
       const requiring_module = module.parent!.filename;
       setGlobOptions({
         cwd: path.dirname(requiring_module),

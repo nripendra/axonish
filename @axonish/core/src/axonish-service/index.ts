@@ -5,6 +5,8 @@ import { directoryConvention, setGlobOptions } from "./directory-convention";
 import "reflect-metadata";
 import { ServiceConvention } from "./service-convention";
 import * as path from "path";
+import { ServiceConfigurationToken, MessageResponderToken } from "../tokens";
+import { MessageResponder } from "../message-responder";
 
 export type AxonishServiceReturnType = (
   constructor: ClassOf<IServiceStartup>
@@ -20,6 +22,11 @@ export function AxonishService(serviceName: string): AxonishServiceReturnType {
   return (constructor: ClassOf<IServiceStartup>) => {
     const serviceConfig = new ServiceConfig();
     serviceConfig.setServiceName(serviceName);
+    serviceConfig.services.set(ServiceConfigurationToken, serviceConfig);
+    serviceConfig.services.set(
+      MessageResponderToken,
+      new MessageResponder(serviceName)
+    );
     const requiring_module = module.parent!.filename;
     setGlobOptions({
       cwd: path.dirname(requiring_module),

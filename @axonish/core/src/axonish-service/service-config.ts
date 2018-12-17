@@ -1,5 +1,6 @@
 import IServiceConfiguration from "../interfaces/IServiceConfiguration";
 import { ServiceConvention } from "./service-convention";
+import Container from "typedi";
 
 export class ServiceConfig implements IServiceConfiguration {
   _serviceName: string = "";
@@ -15,5 +16,9 @@ export class ServiceConfig implements IServiceConfiguration {
   }
   addConvention(convention: ServiceConvention): void {
     this._conventions.push(convention);
+  }
+
+  get services(): typeof Container {
+    return Container;
   }
 }

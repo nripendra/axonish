@@ -31,7 +31,7 @@ import {
   InputType
 } from "type-graphql";
 import { Inject } from "typedi";
-import { MessageBusService } from "../tokens";
+import { MessageBusToken } from "../tokens";
 import { MessageResponder } from "../message-responder";
 
 const responder = new MessageResponder("Test-Channel");
@@ -69,7 +69,7 @@ export class MessageBusTests {
 
     @Resolver(t => TestPayload)
     class MyResolver {
-      constructor(@Inject(MessageBusService) private _bus: IMessageBus) {}
+      constructor(@Inject(MessageBusToken) private _bus: IMessageBus) {}
       @Query(returns => TestResponse)
       async hello(@Arg("input") arg: TestPayload): Promise<TestResponse> {
         return await this._bus.channel("Test-Channel").send(
