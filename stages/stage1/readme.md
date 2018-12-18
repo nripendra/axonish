@@ -7,7 +7,7 @@ Our config function should look like this:
 ```ts
 @AxonishApi()
 export class MyShopApiGateWay implements IApiStartup {
-  async config(appConfig: IApiConfiguration): Promise<any> {
+  async config(appConfig: IApiConfiguration): Promise<void> {
     const schema = await buildSchema({
       resolvers: [__dirname + "/resolvers/recipe-resolver.ts"]
     });

@@ -22,7 +22,7 @@ usage that I'm thinking is as follows:
 // index.ts
 @AxonishApi()
 export class MyShopApiGateWay implements IApiStartup {
-  config(appConfig: IApiConfiguration): void | Promise<any> {
+  config(appConfig: IApiConfiguration): void | Promise<void> {
     // change your configurations here..
   }
 

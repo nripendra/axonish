@@ -12,7 +12,7 @@ One API end-point and one or more microservices. AxonishApi is to be used only f
 ```ts
 @AxonishApi()
 class MyShopApiGateWay implements IApiStartup {
-  config(appConfig: IApiConfiguration): void | Promise<any> {
+  config(appConfig: IApiConfiguration): void | Promise<void> {
     appConfig.setPort(3000);
   }
 
@@ -42,7 +42,7 @@ class MyShopApiGateWay implements IApiStartup {
 
 Will have following members
 
-- `config(appConfig: IApiConfiguration): void | Promise<any>`
+- `config(appConfig: IApiConfiguration): void | Promise<void>`
   Here we will configure our api endpoints.
 
 - `starting(graphqlServer: ApolloServer): void | Promise<void>`

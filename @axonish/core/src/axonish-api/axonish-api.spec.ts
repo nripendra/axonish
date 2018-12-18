@@ -23,7 +23,7 @@ export class AxonishApiSpecs {
     const calledFunctions: string[] = [];
     @AxonishApi()
     class TestApi implements IApiStartup {
-      config(appConfig: IApiConfiguration): void | Promise<any> {
+      config(appConfig: IApiConfiguration): void | Promise<void> {
         calledFunctions.push("config");
       }
       starting(graphqlServer: ApolloServer): void | Promise<void> {
@@ -46,7 +46,7 @@ export class AxonishApiSpecs {
     const calledFunctions: string[] = [];
     @AxonishApi()
     class TestApi implements IApiStartup {
-      async config(appConfig: IApiConfiguration): Promise<any> {
+      async config(appConfig: IApiConfiguration): Promise<void> {
         await Promise.resolve();
         calledFunctions.push("config");
       }
@@ -70,12 +70,12 @@ export class AxonishApiSpecs {
   @AsyncTest(`config function receives an instance of IApiConfiguration`)
   async apiConfig() {
     let config: unknown = null;
-    function isApiConfig(arg: any) {
+    function isApiConfig(arg: unknown) {
       return (arg as IApiConfiguration).setPort !== undefined;
     }
     @AxonishApi()
     class TestApi implements IApiStartup {
-      async config(apiConfig: IApiConfiguration): Promise<any> {
+      async config(apiConfig: IApiConfiguration): Promise<void> {
         await Promise.resolve();
         config = apiConfig;
       }
@@ -95,12 +95,12 @@ export class AxonishApiSpecs {
   @AsyncTest(`starting function receives an instance of ApolloServer`)
   async apolloServer() {
     let server: unknown = null;
-    function isApiConfig(arg: any): arg is IApiConfiguration {
+    function isApiConfig(arg: unknown): arg is IApiConfiguration {
       return (arg as IApiConfiguration).setPort !== undefined;
     }
     @AxonishApi()
     class TestApi implements IApiStartup {
-      async config(apiConfig: IApiConfiguration): Promise<any> {
+      async config(apiConfig: IApiConfiguration): Promise<void> {
         await Promise.resolve();
       }
       async starting(graphqlServer: AxonishApolloServer): Promise<void> {
@@ -125,12 +125,12 @@ export class AxonishApiSpecs {
   async startedMethod() {
     let server: unknown = null;
     let serverStartedInfo: ServerStartedInfo | null = null;
-    function isApiConfig(arg: any): arg is IApiConfiguration {
+    function isApiConfig(arg: unknown): arg is IApiConfiguration {
       return (arg as IApiConfiguration).setPort !== undefined;
     }
     @AxonishApi()
     class TestApi implements IApiStartup {
-      async config(apiConfig: IApiConfiguration): Promise<any> {
+      async config(apiConfig: IApiConfiguration): Promise<void> {
         await Promise.resolve();
       }
       async starting(graphqlServer: AxonishApolloServer): Promise<void> {
@@ -171,12 +171,12 @@ export class AxonishApiSpecs {
   async changePort() {
     let server: unknown = null;
     let serverStartedInfo: ServerStartedInfo | null = null;
-    function isApiConfig(arg: any): arg is IApiConfiguration {
+    function isApiConfig(arg: unknown): arg is IApiConfiguration {
       return (arg as IApiConfiguration).setPort !== undefined;
     }
     @AxonishApi()
     class TestApi implements IApiStartup {
-      async config(apiConfig: IApiConfiguration): Promise<any> {
+      async config(apiConfig: IApiConfiguration): Promise<void> {
         await Promise.resolve();
         apiConfig.setPort(3005);
       }
@@ -225,7 +225,7 @@ export class AxonishApiSpecs {
     type Contacts = { contacts: Contact[] };
     @AxonishApi()
     class TestApi implements IApiStartup {
-      async config(apiConfig: IApiConfiguration): Promise<any> {
+      async config(apiConfig: IApiConfiguration): Promise<void> {
         const contacts: Contact[] = [
           {
             name: "Harry Potter",
@@ -299,7 +299,7 @@ export class AxonishApiSpecs {
     };
     @AxonishApi()
     class TestApi implements IApiStartup {
-      async config(apiConfig: IApiConfiguration): Promise<any> {
+      async config(apiConfig: IApiConfiguration): Promise<void> {
         apiConfig.addConvention(customConvention);
       }
       async starting(graphqlServer: AxonishApolloServer): Promise<void> {
@@ -330,7 +330,7 @@ export class AxonishApiSpecs {
     let server: AxonishApolloServer | null = null;
     @AxonishApi()
     class TestApi implements IApiStartup {
-      async config(apiConfig: IApiConfiguration): Promise<any> {}
+      async config(apiConfig: IApiConfiguration): Promise<void> {}
       async starting(graphqlServer: AxonishApolloServer): Promise<void> {
         await Promise.resolve();
       }

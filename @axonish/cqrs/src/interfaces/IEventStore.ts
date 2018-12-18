@@ -1,24 +1,25 @@
-import { IEvent } from "./IEvent";
+import IEvent from "./IEvent";
 import { Snap } from "../common/snap";
-export interface IEventStore {
-  createSnap(snap: Snap): Promise<any>;
+import { AggregateId } from "../common/aggregate-id";
+import { DomainEvent } from "../common/domain-event";
+export default interface IEventStore {
+  connect(connection: unknown): Promise<IEventStore>;
   saveEvents(
     eventDescriptors: Array<{
-      aggregateId: string;
-      events: IEvent[];
+      aggregateId: AggregateId;
+      events: Array<DomainEvent<unknown> | Snap>;
       expectedVersion: number;
     }>
-  ): Promise<any>;
-  getLatestSnapshot(aggregateId: string): Promise<Snap | null>;
-  getEventsAndSnap(aggregateIds: string[]): Promise<IEvent[]>;
-  getEvents(aggregateId: string): Promise<IEvent[]>;
-  getLatestEvent(aggregateId: string): Promise<IEvent | null>;
-  getEventsBySnapshot(snapId: number): Promise<IEvent[]>;
-  getSnapshotByIndex(aggregateId: string, index: number): Promise<Snap>;
-  getSnapshotByLastIndex(
-    aggregateId: string,
-    index: number
-  ): Promise<Snap | null>;
-  getSnapshotById(id: number): Promise<Snap>;
-  getEventById(id: number): Promise<IEvent | null>;
+  ): Promise<void>;
+  getLatestSnapshot(aggregateId: AggregateId): Promise<Snap | null>;
+  /**
+   * Gets the last snap-shot and all events after the snapshot.
+   * @param aggregateId
+   */
+  getEventsByLatestSnapShot(
+    aggregateId: AggregateId
+  ): Promise<Array<DomainEvent<unknown> | Snap | null>>;
+  getLatestEvent(
+    aggregateId: AggregateId
+  ): Promise<DomainEvent<unknown> | null>;
 }

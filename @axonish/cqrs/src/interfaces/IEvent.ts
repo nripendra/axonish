@@ -1,10 +1,11 @@
 import { AggregateId } from "../common/aggregate-id";
 
-export interface IEvent {
+export default interface IEvent {
   id?: number;
   aggregateId?: AggregateId;
   index: number;
   previousEventIndex?: number;
   payload: unknown;
-  eventType?: string;
+  eventType: string;
+  aggregateType: string;
 }
