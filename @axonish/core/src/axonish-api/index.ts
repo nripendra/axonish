@@ -9,7 +9,7 @@ import {
 
 import "reflect-metadata";
 import { resolverConvention, setGlobOptions } from "./resolver-convention";
-import { ClassOf } from "../common";
+import { ClassOf } from "../common/class-of";
 import * as path from "path";
 import { useContainer } from "type-graphql";
 import { Container } from "typedi";
