@@ -6,4 +6,6 @@ export default interface IServiceConfiguration {
   addConvention(convention: ServiceConvention): void;
 
   services: typeof Container;
+
+  onDone(callback: () => Promise<void> | void): void;
 }

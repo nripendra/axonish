@@ -45,6 +45,12 @@ export function AxonishService(serviceName: string): AxonishServiceReturnType {
       await Promise.all(
         serviceConfig.conventions.map(callConvention).filter(isPromise)
       );
+
+      const callDoneCallback = (callback: () => void | Promise<void>) =>
+        callback();
+      await Promise.all(
+        serviceConfig.doneCallbacks.map(callDoneCallback).filter(isPromise)
+      );
     })();
   };
 }

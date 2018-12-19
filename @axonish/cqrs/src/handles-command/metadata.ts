@@ -43,3 +43,7 @@ export function clearAggregateRootCommandHandler() {
 export function getAggregateRootCommandHandlers(commandType: string) {
   return aggregateRootCommandHandlerMetadata[commandType] || [];
 }
+
+export function getAllAggregateRootCommandHandlers() {
+  return aggregateRootCommandHandlerMetadata;
+}

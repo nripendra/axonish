@@ -1,5 +1,5 @@
 import { Message } from "../common/message";
 
-export interface IChannel {
+export default interface IChannel {
   send<T, U>(message: Message<T, U>): Promise<U>;
 }

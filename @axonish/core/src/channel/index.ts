@@ -1,4 +1,4 @@
-import { IChannel } from "../interfaces/IChannel";
+import IChannel from "../interfaces/IChannel";
 import { Requester } from "cote";
 import { Message } from "../common/message";
 
