@@ -3,7 +3,6 @@ import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { DomainEvent } from "../common/domain-event";
 import { Snap } from "../common/snap";
 import IEvent from "../interfaces/IEvent";
-import { EventHandlerFunction } from "../common/event-handler-function";
 import { isNullOrUndefined } from "util";
 import {
   getProjectionHandlers,
@@ -11,11 +10,20 @@ import {
   ProjectionFunction
 } from "../projection-handler/metadata";
 import { Container } from "typedi";
+import {
+  addAggregateRootEventHandler,
+  AggregateRootEventHandlerMetadata
+} from "../handles-event/metadata";
+import {
+  AggregateRootEventHandlerDictionary,
+  AggregateRootEventHandlerFunction
+} from "../common/aggregate-root-metadata-types";
 
 function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
   constructor: T
 ) {
-  return class extends constructor implements IAggregateRoot {
+  const aggregateRootType = class extends constructor
+    implements IAggregateRoot {
     constructor(...args: any[]) {
       super(...args);
       if (isNullOrUndefined(this.aggregateId)) {
@@ -45,7 +53,7 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
     }
     applyEvent<TEventPayload>(
       event: DomainEvent<TEventPayload> | Snap<TEventPayload>,
-      handler: EventHandlerFunction<TEventPayload>,
+      handler: AggregateRootEventHandlerFunction<TEventPayload>,
       isUncommittedEvent: boolean
     ): void {
       if (!isNullOrUndefined(event) && !isNullOrUndefined(handler)) {
@@ -98,6 +106,18 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
       return null;
     }
   };
+  if (constructor.prototype.__handlesEvent) {
+    const __handlesEvent: AggregateRootEventHandlerDictionary =
+      constructor.prototype.__handlesEvent;
+    for (const key in __handlesEvent) {
+      const handler = __handlesEvent[key];
+      addAggregateRootEventHandler(key, handler, aggregateRootType);
+    }
+    delete constructor.prototype.__handlesEvent;
+  }
+  Object.defineProperty(aggregateRootType, "name", { value: constructor.name });
+
+  return aggregateRootType;
 }
 export function AggregateRoot() {
   return AggregateRootClassDecorator;
