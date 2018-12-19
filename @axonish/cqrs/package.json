@@ -7,6 +7,7 @@
   "version": "0.1.0",
   "dependencies": {
     "@axonish/core": "0.1.0",
-    "pogi": "^2.5.11"
+    "pogi": "^2.5.11",
+    "typedi": "^0.8.0"
   }
 }

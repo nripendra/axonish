@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS public.events
     id serial NOT NULL,
     "aggregateId" character varying(50) COLLATE pg_catalog."default" NOT NULL,
     index integer,
-    "eventType" character varying(500) COLLATE pg_catalog."default" NOT NULL,
+    "type" character varying(500) COLLATE pg_catalog."default" NOT NULL,
     payload jsonb NOT NULL,
     "aggregateType" character varying(500) COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone DEFAULT now(),

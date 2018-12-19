@@ -1,14 +1,17 @@
 import IEvent from "../interfaces/IEvent";
+import { Message } from "@axonish/core";
 
-export class Snap implements IEvent {
+export class Snap<TPayload> extends Message<TPayload, void> implements IEvent {
   static get EVENT_TYPE() {
     return "Snap";
   }
-  static fromEventData(eventData: IEvent | null): Snap | null {
+  static fromEventData<TPayload>(
+    eventData: IEvent | null
+  ): Snap<TPayload> | null {
     if (eventData) {
       if (eventData.aggregateId) {
-        const snap: Snap = new Snap(
-          eventData.payload,
+        const snap: Snap<TPayload> = new Snap(
+          eventData.payload as TPayload,
           eventData.aggregateType,
           eventData.aggregateId
         );
@@ -22,7 +25,7 @@ export class Snap implements IEvent {
   }
   toEventData(): IEvent {
     return {
-      eventType: this.eventType,
+      type: this.type,
       aggregateId: this.aggregateId,
       aggregateType: this.aggregateType,
       index: this.index,
@@ -31,15 +34,18 @@ export class Snap implements IEvent {
       id: this.id
     };
   }
-  get eventType(): string {
+  get type(): string {
     return Snap.EVENT_TYPE;
   }
+  set type(value: string) {}
   id: number = 0;
   index: number = 0;
   previousEventIndex: number = 0;
   constructor(
-    public payload: unknown,
+    public payload: TPayload,
     public aggregateType: string,
     public aggregateId: string
-  ) {}
+  ) {
+    super(Snap.EVENT_TYPE, payload);
+  }
 }

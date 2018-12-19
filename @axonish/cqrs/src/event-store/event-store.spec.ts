@@ -2,9 +2,9 @@ import {
   TestFixture,
   Expect,
   AsyncTest,
-  Timeout,
   AsyncSetupFixture,
-  AsyncTeardownFixture
+  AsyncTeardownFixture,
+  IgnoreTests
 } from "alsatian";
 import PgEventStore from ".";
 import { exec, ExecException } from "child_process";
@@ -20,31 +20,39 @@ const connection: ConnectionOptions = {
   password: "vagrant",
   port: 5433
 };
+
+// Explicitely remove ignore directive if some change is being done on:
+// - PgEventStore
+// - IEventStore
+// - DomainEvent
+// - Snap
+// - IEvent
+@IgnoreTests()
 @TestFixture()
 export class EventStoreSpecs {
   @AsyncSetupFixture
   async setupFixture() {
-    // this function will be run ONCE before any test has run
-    // you can use this to do setup that needs to happen only once
-    console.log("vagrant up [starting...]");
-    await new Promise(function(resolve) {
-      exec(
-        "vagrant up --provision",
-        { cwd: __dirname },
-        (error: ExecException | null, stdout: string, stderr: string) => {
-          resolve();
-        }
-      );
-    });
-    console.log("vagrant up [done]");
-
-    console.log("Creating tables [starting...]");
-
-    const db: PgDb = await PgDb.connect(connection);
-    await db.execute(join(__dirname, "./create-events.sql"));
-    await db.execute(join(__dirname, "./create-snaps.sql"));
-    await db.close();
-    console.log("Creating tables [Done]");
+    // // uncomment lines below if automatic vagrant-up is desired.
+    // // For these test to run correctly, either we can do vagrant up, or setup a postgres server on development
+    // // machine itself. There should be a database named "EventStore", with "vagrant" user as it's owner, and
+    // // the password should be "vagrant" too. Note, that the port is also expected to be 5433.
+    // console.log("vagrant up [starting...]");
+    // await new Promise(function(resolve) {
+    //   exec(
+    //     "vagrant up --provision",
+    //     { cwd: __dirname },
+    //     (error: ExecException | null, stdout: string, stderr: string) => {
+    //       resolve();
+    //     }
+    //   );
+    // });
+    // // console.log("vagrant up [done]");
+    // console.log("Creating tables [starting...]");
+    // const db: PgDb = await PgDb.connect(connection);
+    // await db.execute(join(__dirname, "./create-events.sql"));
+    // await db.execute(join(__dirname, "./create-snaps.sql"));
+    // await db.close();
+    // console.log("Creating tables [Done]");
   }
 
   @AsyncTest()
@@ -86,21 +94,21 @@ export class EventStoreSpecs {
     Expect(events[0]!.index).toBe(1);
     Expect(events[0]!.previousEventIndex!).toBe(0);
     Expect(events[0]!.aggregateType).toBe("MyAggregateType");
-    Expect(events[0]!.eventType).toBe("Create");
+    Expect(events[0]!.type).toBe("Create");
     Expect((events[0]!.payload as { value: number }).value).toBe(1);
 
     Expect(events[1]!.aggregateId!).toBe("1");
     Expect(events[1]!.index).toBe(2);
     Expect(events[1]!.previousEventIndex).toBe(1);
     Expect(events[1]!.aggregateType).toBe("MyAggregateType");
-    Expect(events[1]!.eventType).toBe("ChangeValue");
+    Expect(events[1]!.type).toBe("ChangeValue");
     Expect((events[1]!.payload as { value: number }).value).toBe(5);
 
     Expect(events[2]!.aggregateId!).toBe("1");
     Expect(events[2]!.index).toBe(3);
     Expect(events[2]!.previousEventIndex).toBe(2);
     Expect(events[2]!.aggregateType).toBe("MyAggregateType");
-    Expect(events[2]!.eventType).toBe("ChangeValue");
+    Expect(events[2]!.type).toBe("ChangeValue");
     Expect((events[2]!.payload as { value: number }).value).toBe(15);
   }
 
@@ -144,27 +152,27 @@ export class EventStoreSpecs {
     Expect(events[0]!.index).toBe(3);
     Expect(events[0]!.previousEventIndex!).toBe(2);
     Expect(events[0]!.aggregateType).toBe("MyAggregateType");
-    Expect(events[0]!.eventType).toBe("Snap");
+    Expect(events[0]!.type).toBe("Snap");
     Expect((events[0]!.payload as { value: number }).value).toBe(5);
 
     Expect(events[1]!.aggregateId!).toBe("1");
     Expect(events[1]!.index).toBe(4);
     Expect(events[1]!.previousEventIndex).toBe(3);
     Expect(events[1]!.aggregateType).toBe("MyAggregateType");
-    Expect(events[1]!.eventType).toBe("ChangeValue");
+    Expect(events[1]!.type).toBe("ChangeValue");
     Expect((events[1]!.payload as { value: number }).value).toBe(15);
   }
 
   @AsyncTeardownFixture
   public async asyncTeardownFixture() {
-    await new Promise(function(resolve) {
-      exec(
-        "vagrant halt",
-        { cwd: __dirname },
-        (error: ExecException | null, stdout: string, stderr: string) => {
-          resolve();
-        }
-      );
-    });
+    // await new Promise(function(resolve) {
+    //   exec(
+    //     "vagrant halt",
+    //     { cwd: __dirname },
+    //     (error: ExecException | null, stdout: string, stderr: string) => {
+    //       resolve();
+    //     }
+    //   );
+    // });
   }
 }

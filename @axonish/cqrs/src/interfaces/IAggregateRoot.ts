@@ -7,15 +7,15 @@ import { Snap } from "../common/snap";
 export default interface IAggregateRoot {
   aggregateId?: AggregateId;
   getState<T>(): T;
-  committedEvents: Array<DomainEvent<unknown> | Snap>;
-  uncommittedEvents: Array<DomainEvent<unknown> | Snap>;
+  committedEvents: Array<DomainEvent<unknown> | Snap<unknown>>;
+  uncommittedEvents: Array<DomainEvent<unknown> | Snap<unknown>>;
   lastEventIndex?: number;
   load(eventHistory: IEvent[]): void;
 
   applyEvent<TEventPayload>(
-    event: DomainEvent<unknown> | Snap,
+    event: DomainEvent<TEventPayload> | Snap<TEventPayload>,
     handler: EventHandlerFunction<TEventPayload>,
-    isUncomittedEvent: boolean
+    isUncommittedEvent: boolean
   ): void;
 
   commit(): Promise<void>;
@@ -25,10 +25,13 @@ export default interface IAggregateRoot {
   /**
    * Apply a snapshot
    */
-  applySnapShot(snapShot: Snap, isHistoricalSnapShot: boolean): void;
+  applySnapShot<TPayload>(
+    snapShot: Snap<TPayload>,
+    isHistoricalSnapShot: boolean
+  ): void;
 
   /**
    * Logic to create snapshot
    */
-  createSnap(): Snap;
+  createSnap<TPayload>(): Snap<TPayload> | null;
 }

@@ -7,17 +7,17 @@ export class DomainEvent<T> extends Message<T, void> implements IEvent {
   previousEventIndex?: number | undefined;
   index: number = 0;
   constructor(
-    public eventType: string,
+    type: string,
     public payload: T,
     public aggregateType: string,
     public aggregateId?: AggregateId
   ) {
-    super(eventType, payload);
+    super(type, payload);
   }
 
   static fromEventData<T>(eventData: IEvent): DomainEvent<T> {
     const domainEvent = new DomainEvent<T>(
-      eventData.eventType,
+      eventData.type,
       eventData.payload as T,
       eventData.aggregateType,
       eventData.aggregateId
@@ -29,7 +29,7 @@ export class DomainEvent<T> extends Message<T, void> implements IEvent {
   }
   toEventData(): IEvent {
     return {
-      eventType: this.eventType,
+      type: this.type,
       aggregateId: this.aggregateId,
       aggregateType: this.aggregateType,
       index: this.index,

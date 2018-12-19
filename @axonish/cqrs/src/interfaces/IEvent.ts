@@ -6,6 +6,6 @@ export default interface IEvent {
   index: number;
   previousEventIndex?: number;
   payload: unknown;
-  eventType: string;
+  type: string;
   aggregateType: string;
 }
