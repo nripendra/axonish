@@ -298,7 +298,11 @@ export class AggregateRootDecorator {
   @AsyncTest("`commit` will run projections")
   async commitWillRunProjections() {
     clearProjectionHandlers();
-    addProjectionHandler("MyEvent", "onMyEvent", ProjectionHandler);
+    addProjectionHandler(
+      "MyEvent",
+      ProjectionHandler.prototype.onMyEvent,
+      ProjectionHandler
+    );
     @AggregateRoot()
     class TestSubject {
       onMyEvent() {}
@@ -335,7 +339,7 @@ export class AggregateRootDecorator {
     clearProjectionHandlers();
     addProjectionHandler(
       "MyAsyncEvent",
-      "onMyAsyncEvent",
+      AsyncProjectionHandler.prototype.onMyAsyncEvent,
       AsyncProjectionHandler
     );
     @AggregateRoot()
@@ -374,12 +378,12 @@ export class AggregateRootDecorator {
     clearProjectionHandlers();
     addProjectionHandler(
       "MyEventProjectionInstance",
-      "onMyAsyncEvent",
+      AsyncProjectionHandler2.prototype.onMyAsyncEvent,
       AsyncProjectionHandler2
     );
     addProjectionHandler(
       "MyEventProjectionInstance2",
-      "onMyAsyncEvent",
+      AsyncProjectionHandler2.prototype.onMyAsyncEvent,
       AsyncProjectionHandler2
     );
     @AggregateRoot()
@@ -418,12 +422,12 @@ export class AggregateRootDecorator {
     clearProjectionHandlers();
     addProjectionHandler(
       "MyEventProjectionInstance",
-      "onMyAsyncEvent",
+      AsyncProjectionHandler3.prototype.onMyAsyncEvent,
       AsyncProjectionHandler3
     );
     addProjectionHandler(
       "MyEventProjectionInstance2",
-      "onMyAsyncEvent",
+      AsyncProjectionHandler3.prototype.onMyAsyncEvent,
       AsyncProjectionHandler3
     );
     @AggregateRoot()
@@ -509,7 +513,7 @@ class AsyncProjectionHandler {
   constructor() {
     AsyncProjectionHandler.callCount = 0;
   }
-  onMyAsyncEvent(state: unknown, event: DomainEvent<{}>) {
+  onMyAsyncEvent(state: unknown, event: DomainEvent<unknown>) {
     return new Promise(function(resolve) {
       setTimeout(() => {
         AsyncProjectionHandler.callCount++;

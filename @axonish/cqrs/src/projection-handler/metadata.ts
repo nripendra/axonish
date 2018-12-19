@@ -1,10 +1,11 @@
 import { ClassOf } from "@axonish/core";
 import { DomainEvent } from "../common/domain-event";
+import { forceConvert } from "../util/force-convert";
 
 export type ProjectionFunction = (
-  state: unknown,
-  event: DomainEvent<unknown>
-) => Promise<void> | void;
+  state: any,
+  event: DomainEvent<any>
+) => Promise<void | {}> | void;
 
 export type ProjectionHandlerType = {
   [key: string]: ProjectionFunction;
@@ -19,23 +20,18 @@ const projectionHandlers: {
 } = {};
 export function addProjectionHandler(
   eventType: string,
-  handlerFunctionName: string,
-  target: unknown
+  handlerFunction: ProjectionFunction,
+  projectionClass: unknown
 ) {
-  const projectionClass = target as ClassOf<ProjectionHandlerType>;
-  if (
-    projectionClass &&
-    projectionClass.prototype &&
-    projectionClass.prototype[handlerFunctionName]
-  ) {
+  if (projectionClass) {
     if (!Array.isArray(projectionHandlers[eventType])) {
       projectionHandlers[eventType] = [];
     }
-
-    const handlerFunction = projectionClass.prototype[handlerFunctionName];
     projectionHandlers[eventType].push({
       handlerFunction,
-      projectionClass
+      projectionClass: forceConvert<ClassOf<ProjectionHandlerType>>(
+        projectionClass
+      )
     });
   }
 }

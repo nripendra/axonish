@@ -9,6 +9,11 @@ import {
 import { AggregateId } from "../common/aggregate-id";
 import { forceConvert } from "../util/force-convert";
 import { EventDescriptor } from "../common/event-descriptor";
+import { Projection } from "../projection-handler";
+import {
+  clearProjectionHandlers,
+  getProjectionHandlers
+} from "../projection-handler/metadata";
 
 @TestFixture("@HandlesEvent decorator")
 export class HandlesEventDecoratorSpecs {
@@ -117,6 +122,41 @@ export class HandlesEventDecoratorSpecs {
     );
     Expect(eventHandlers[1].aggregrateRootClass).toBeDefined();
     Expect(eventHandlers[1].aggregrateRootClass).toBe(TestSubject2);
+  }
+
+  @Test()
+  withProjectionRoot() {
+    clearProjectionHandlers();
+    @Projection()
+    class TestSubject {
+      @HandlesEvent(MyEvent())
+      myeventHandler() {}
+    }
+    @Projection()
+    class TestSubject2 {
+      @HandlesEvent(MyEvent())
+      myeventHandler() {}
+    }
+    const prototype = forceConvert<HandlesEventPrototype>(
+      TestSubject.prototype
+    );
+    // AggregateRoot decorator removes __handlesEvent
+    Expect(prototype.__handlesEvent).not.toBeDefined();
+    // AggregateRoot adds the values of __handlesEvent to metadata dictionary
+    const eventHandlers = getProjectionHandlers("MyEvent") || [];
+    Expect(eventHandlers.length).toBe(2);
+    Expect(eventHandlers[0].handlerFunction).toBe(
+      TestSubject.prototype.myeventHandler
+    );
+    Expect(eventHandlers[0].projectionClass).toBeDefined();
+    Expect(eventHandlers[0].projectionClass).toBe(TestSubject);
+
+    Expect((TestSubject2.prototype as any).__handlesEvent).not.toBeDefined();
+    Expect(eventHandlers[1].handlerFunction).toBe(
+      TestSubject2.prototype.myeventHandler
+    );
+    Expect(eventHandlers[1].projectionClass).toBeDefined();
+    Expect(eventHandlers[1].projectionClass).toBe(TestSubject2);
   }
 }
 
