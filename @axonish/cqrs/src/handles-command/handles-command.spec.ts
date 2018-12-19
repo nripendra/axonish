@@ -8,6 +8,7 @@ import {
   clearAggregateRootCommandHandler,
   getAggregateRootCommandHandlers
 } from "./metadata";
+import { CommandDescriptor } from "../common/command-descriptor";
 
 @TestFixture("@HandlesCommand decorator")
 export class HandlesCommandDecoratorSpecs {
@@ -119,12 +120,6 @@ export class HandlesCommandDecoratorSpecs {
   }
 }
 
-type CommandDescriptor<T> = {
-  type: string;
-  payload: T;
-  aggregateId: AggregateId;
-};
-
 type Payload = {
   value: number;
 };
@@ -134,11 +129,11 @@ type ResponsePayload = {
 
 type MyCommand = Command<Payload, ResponsePayload>;
 
-function MyCommand(descriptor?: CommandDescriptor<Payload>): MyCommand {
-  descriptor = descriptor || ({} as any);
+function MyCommand(payload?: Payload): MyCommand {
+  const descriptor = { payload } as CommandDescriptor<Payload>;
   return new Command<Payload, ResponsePayload>(
     MyCommand.name,
-    descriptor!.payload,
-    descriptor!.aggregateId
+    descriptor.payload,
+    descriptor.aggregateId
   );
 }

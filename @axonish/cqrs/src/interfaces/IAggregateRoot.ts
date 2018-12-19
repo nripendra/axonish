@@ -7,6 +7,7 @@ import { Snap } from "../common/snap";
 export default interface IAggregateRoot {
   aggregateId?: AggregateId;
   getState<T>(): T;
+  setState<T>(state: T): void;
   committedEvents: Array<DomainEvent<unknown> | Snap<unknown>>;
   uncommittedEvents: Array<DomainEvent<unknown> | Snap<unknown>>;
   lastEventIndex?: number;

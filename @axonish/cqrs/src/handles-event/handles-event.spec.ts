@@ -8,6 +8,7 @@ import {
 } from "./metadata";
 import { AggregateId } from "../common/aggregate-id";
 import { forceConvert } from "../util/force-convert";
+import { EventDescriptor } from "../common/event-descriptor";
 
 @TestFixture("@HandlesEvent decorator")
 export class HandlesEventDecoratorSpecs {
@@ -121,17 +122,12 @@ export class HandlesEventDecoratorSpecs {
 
 type MyPayload = { value: number };
 type MyEvent = DomainEvent<MyPayload>;
-type EventDescriptor<TPayload> = {
-  payload: MyPayload;
-  aggregateType: string;
-  aggregateId: AggregateId;
-};
-function MyEvent(descriptor?: EventDescriptor<MyPayload>): MyEvent {
-  descriptor = descriptor || ({} as any);
+function MyEvent(payload?: MyPayload): MyEvent {
+  const descriptor = { payload } as EventDescriptor<MyPayload>;
   return new DomainEvent<MyPayload>(
     "MyEvent",
-    descriptor!.payload,
-    descriptor!.aggregateType,
-    descriptor!.aggregateId
+    descriptor.payload,
+    descriptor.aggregateType,
+    descriptor.aggregateId
   );
 }
