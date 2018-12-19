@@ -4,11 +4,11 @@ import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { AggregateRootCommandHandlerFunction } from "../common/aggregate-root-metadata-types";
 
 export type AggregateRootCommandHandlerType = {
-  [key: string]: AggregateRootCommandHandlerFunction<unknown>;
+  [key: string]: AggregateRootCommandHandlerFunction<unknown, unknown>;
 };
 
 export type AggregateRootCommandHandlerMetadata = {
-  handlerFunction: AggregateRootCommandHandlerFunction<unknown>;
+  handlerFunction: AggregateRootCommandHandlerFunction<unknown, unknown>;
   aggregrateRootClass: ClassOf<AggregateRootCommandHandlerType>;
 };
 
@@ -20,7 +20,7 @@ const aggregateRootCommandHandlerMetadata: AggregateRootCommandHandlerMetadataDi
 
 export function addAggregateRootCommandHandler(
   commandType: string,
-  handlerFunction: AggregateRootCommandHandlerFunction<unknown>,
+  handlerFunction: AggregateRootCommandHandlerFunction<unknown, unknown>,
   aggregrateRootClass: ClassOf<IAggregateRoot>
 ) {
   const handlerMetadata =
