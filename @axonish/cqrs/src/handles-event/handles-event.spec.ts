@@ -1,11 +1,13 @@
 import { TestFixture, Expect, Test } from "alsatian";
-import { HandlesEvent } from ".";
+import { HandlesEvent, HandlesEventPrototype } from ".";
 import { DomainEvent } from "../common/domain-event";
 import { AggregateRoot } from "../aggregate-root";
 import {
   clearAggregateRootEventHandler,
   getAggregateRootEventHandlers
 } from "./metadata";
+import { AggregateId } from "../common/aggregate-id";
+import { forceConvert } from "../util/force-convert";
 
 @TestFixture("@HandlesEvent decorator")
 export class HandlesEventDecoratorSpecs {
@@ -15,11 +17,12 @@ export class HandlesEventDecoratorSpecs {
       @HandlesEvent(MyEvent())
       myeventHandler() {}
     }
-    Expect((TestSubject.prototype as any).__handlesEvent).toBeDefined();
-    Expect(
-      (TestSubject.prototype as any).__handlesEvent["MyEvent"]
-    ).toBeDefined();
-    Expect((TestSubject.prototype as any).__handlesEvent["MyEvent"]).toBe(
+    const prototype = forceConvert<HandlesEventPrototype>(
+      TestSubject.prototype
+    );
+    Expect(prototype.__handlesEvent).toBeDefined();
+    Expect(prototype.__handlesEvent!["MyEvent"]).toBeDefined();
+    Expect(prototype.__handlesEvent!["MyEvent"]).toBe(
       TestSubject.prototype.myeventHandler
     );
   }
@@ -33,11 +36,12 @@ export class HandlesEventDecoratorSpecs {
       @HandlesEvent(MyEvent())
       myeventHandler2() {}
     }
-    Expect((TestSubject.prototype as any).__handlesEvent).toBeDefined();
-    Expect(
-      (TestSubject.prototype as any).__handlesEvent["MyEvent"]
-    ).toBeDefined();
-    Expect((TestSubject.prototype as any).__handlesEvent["MyEvent"]).toBe(
+    const prototype = forceConvert<HandlesEventPrototype>(
+      TestSubject.prototype
+    );
+    Expect(prototype.__handlesEvent).toBeDefined();
+    Expect(prototype.__handlesEvent!["MyEvent"]).toBeDefined();
+    Expect(prototype.__handlesEvent!["MyEvent"]).toBe(
       TestSubject.prototype.myeventHandler2
     );
   }
@@ -51,14 +55,20 @@ export class HandlesEventDecoratorSpecs {
   doesNothingOnEmptyPropertyKey() {
     class TestSubject {}
     HandlesEvent(MyEvent())(TestSubject.prototype, "", {});
-    Expect((TestSubject.prototype as any).__handlesEvent).not.toBeDefined();
+    const prototype = forceConvert<HandlesEventPrototype>(
+      TestSubject.prototype
+    );
+    Expect(prototype.__handlesEvent).not.toBeDefined();
   }
 
   @Test()
   doesNothingOnNonExistingPropertyKey() {
     class TestSubject {}
     HandlesEvent(MyEvent())(TestSubject.prototype, "foobar", {});
-    Expect((TestSubject.prototype as any).__handlesEvent).not.toBeDefined();
+    const prototype = forceConvert<HandlesEventPrototype>(
+      TestSubject.prototype
+    );
+    Expect(prototype.__handlesEvent).not.toBeDefined();
   }
 
   @Test()
@@ -67,7 +77,10 @@ export class HandlesEventDecoratorSpecs {
       foobar = 10;
     }
     HandlesEvent(MyEvent())(TestSubject.prototype, "foobar", {});
-    Expect((TestSubject.prototype as any).__handlesEvent).not.toBeDefined();
+    const prototype = forceConvert<HandlesEventPrototype>(
+      TestSubject.prototype
+    );
+    Expect(prototype.__handlesEvent).not.toBeDefined();
   }
 
   @Test()
@@ -83,8 +96,11 @@ export class HandlesEventDecoratorSpecs {
       @HandlesEvent(MyEvent())
       myeventHandler() {}
     }
+    const prototype = forceConvert<HandlesEventPrototype>(
+      TestSubject.prototype
+    );
     // AggregateRoot decorator removes __handlesEvent
-    Expect((TestSubject.prototype as any).__handlesEvent).not.toBeDefined();
+    Expect(prototype.__handlesEvent).not.toBeDefined();
     // AggregateRoot adds the values of __handlesEvent to metadata dictionary
     const eventHandlers = getAggregateRootEventHandlers("MyEvent");
     Expect(eventHandlers.length).toBe(2);
@@ -108,7 +124,7 @@ type MyEvent = DomainEvent<MyPayload>;
 type EventDescriptor<TPayload> = {
   payload: MyPayload;
   aggregateType: string;
-  aggregateId: string;
+  aggregateId: AggregateId;
 };
 function MyEvent(descriptor?: EventDescriptor<MyPayload>): MyEvent {
   descriptor = descriptor || ({} as any);

@@ -4,8 +4,9 @@ import {
   AggregateRootEventHandlerFunction,
   AggregateRootEventHandlerDictionary
 } from "../common/aggregate-root-metadata-types";
+import { forceConvert } from "../util/force-convert";
 
-type EventHandlerPrototype = {
+export type HandlesEventPrototype = {
   [key: string]: () => void;
 } & { __handlesEvent?: AggregateRootEventHandlerDictionary };
 export function HandlesEvent<TRequestPayload>(
@@ -18,7 +19,7 @@ export function HandlesEvent<TRequestPayload>(
   ) {
     if (targetPrototype != null && propertyKey) {
       const eventName: string = event.type;
-      const prototype = targetPrototype as EventHandlerPrototype;
+      const prototype = forceConvert<HandlesEventPrototype>(targetPrototype);
 
       const eventHandlers: AggregateRootEventHandlerDictionary =
         prototype.__handlesEvent || {};

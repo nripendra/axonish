@@ -8,3 +8,11 @@ export type AggregateRootEventHandlerFunction<TEventPayload> = (
 export type AggregateRootEventHandlerDictionary = {
   [eventType: string]: AggregateRootEventHandlerFunction<unknown>;
 };
+
+export type AggregateRootCommandHandlerFunction<TCommandPayload> = (
+  event: DomainEvent<TCommandPayload>
+) => Promise<void> | void;
+
+export type AggregateRootCommandHandlerDictionary = {
+  [commandType: string]: AggregateRootCommandHandlerFunction<unknown>;
+};

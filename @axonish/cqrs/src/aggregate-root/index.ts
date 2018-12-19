@@ -16,8 +16,10 @@ import {
 } from "../handles-event/metadata";
 import {
   AggregateRootEventHandlerDictionary,
-  AggregateRootEventHandlerFunction
+  AggregateRootEventHandlerFunction,
+  AggregateRootCommandHandlerDictionary
 } from "../common/aggregate-root-metadata-types";
+import { addAggregateRootCommandHandler } from "../handles-command/metadata";
 
 function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
   constructor: T
@@ -114,6 +116,15 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
       addAggregateRootEventHandler(key, handler, aggregateRootType);
     }
     delete constructor.prototype.__handlesEvent;
+  }
+  if (constructor.prototype.__handlesCommand) {
+    const __handlesCommand: AggregateRootCommandHandlerDictionary =
+      constructor.prototype.__handlesCommand;
+    for (const key in __handlesCommand) {
+      const handler = __handlesCommand[key];
+      addAggregateRootCommandHandler(key, handler, aggregateRootType);
+    }
+    delete constructor.prototype.__handlesCommand;
   }
   Object.defineProperty(aggregateRootType, "name", { value: constructor.name });
 
