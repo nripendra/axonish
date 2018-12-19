@@ -1,4 +1,4 @@
-import { IRepository } from "../interfaces/IRepository";
+import IRepository from "../interfaces/IRepository";
 import IEventStore from "../interfaces/IEventStore";
 import IEvent from "../interfaces/IEvent";
 import Container from "typedi";

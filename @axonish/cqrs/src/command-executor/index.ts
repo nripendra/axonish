@@ -1,5 +1,5 @@
 import { Command } from "../common/command";
-import { IRepository } from "../interfaces/IRepository";
+import IRepository from "../interfaces/IRepository";
 import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { promises } from "fs";
 import Container from "typedi";
