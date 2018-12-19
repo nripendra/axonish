@@ -4,7 +4,7 @@ import Container from "typedi";
 
 export default interface ICqrsConfiguration {
   parent: IServiceConfiguration;
-  usePostgres(connection: ConnectionOptions): void;
+  usePostgres(connection: ConnectionOptions): Promise<void>;
 
   services: typeof Container;
 }
