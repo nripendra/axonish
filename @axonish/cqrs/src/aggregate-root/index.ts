@@ -12,7 +12,8 @@ import {
 import { Container } from "typedi";
 import {
   addAggregateRootEventHandler,
-  AggregateRootEventHandlerMetadata
+  AggregateRootEventHandlerMetadata,
+  getAggregateRootEventHandlers
 } from "../handles-event/metadata";
 import {
   AggregateRootEventHandlerDictionary,
@@ -53,8 +54,39 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
     committedEvents: (DomainEvent<unknown> | Snap<unknown>)[] = [];
     uncommittedEvents: (DomainEvent<unknown> | Snap<unknown>)[] = [];
     lastEventIndex?: number;
-    load(eventHistory: IEvent[]): void {
-      throw new Error("Method not implemented.");
+    load(eventHistory: Array<DomainEvent<unknown> | Snap<unknown>>): void {
+      this._state = {};
+      if (eventHistory) {
+        for (let i = 0; i < eventHistory.length; i++) {
+          const event = eventHistory[i];
+          if (event.type && event.payload) {
+            const handlers = getAggregateRootEventHandlers(event.type);
+            const handlerFunction = (
+              event: DomainEvent<unknown>,
+              isHistoricalEvent: boolean
+            ) => {
+              for (let j = 0; j < handlers.length; j++) {
+                if (this instanceof handlers[j].aggregrateRootClass) {
+                  handlers[j].handlerFunction.apply(this, [
+                    event,
+                    isHistoricalEvent
+                  ]);
+                }
+              }
+            };
+            this.applyEvent(
+              new DomainEvent<unknown>(
+                event.type,
+                event.payload,
+                event.aggregateType,
+                event.aggregateId || ""
+              ),
+              handlerFunction,
+              false
+            );
+          }
+        }
+      }
     }
     applyEvent<TEventPayload>(
       event: DomainEvent<TEventPayload> | Snap<TEventPayload>,
@@ -63,6 +95,7 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
     ): void {
       if (!isNullOrUndefined(event) && !isNullOrUndefined(handler)) {
         const isHistoricalEvent: boolean = isUncommittedEvent === false;
+        event.aggregateType = constructor.name;
         event.aggregateId = this.aggregateId;
         handler.apply(this, [event, isHistoricalEvent]);
 

@@ -11,7 +11,7 @@ export default interface IAggregateRoot {
   committedEvents: Array<DomainEvent<unknown> | Snap<unknown>>;
   uncommittedEvents: Array<DomainEvent<unknown> | Snap<unknown>>;
   lastEventIndex?: number;
-  load(eventHistory: IEvent[]): void;
+  load(eventHistory: Array<DomainEvent<unknown> | Snap<unknown> | null>): void;
 
   applyEvent<TEventPayload>(
     event: DomainEvent<TEventPayload> | Snap<TEventPayload>,
