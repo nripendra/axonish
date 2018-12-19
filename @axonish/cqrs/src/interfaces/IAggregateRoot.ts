@@ -1,7 +1,7 @@
 import { AggregateId } from "../common/aggregate-id";
 import { DomainEvent } from "../common/domain-event";
 import IEvent from "./IEvent";
-import { EventHandlerFunction } from "../common/event-handler-function";
+import { AggregateRootEventHandlerFunction } from "../common/aggregate-root-metadata-types";
 import { Snap } from "../common/snap";
 
 export default interface IAggregateRoot {
@@ -14,7 +14,7 @@ export default interface IAggregateRoot {
 
   applyEvent<TEventPayload>(
     event: DomainEvent<TEventPayload> | Snap<TEventPayload>,
-    handler: EventHandlerFunction<TEventPayload>,
+    handler: AggregateRootEventHandlerFunction<TEventPayload>,
     isUncommittedEvent: boolean
   ): void;
 
