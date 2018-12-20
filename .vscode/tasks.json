@@ -6,7 +6,21 @@
     {
       "type": "typescript",
       "tsconfig": "@axonish\\tsconfig.json",
-      "problemMatcher": ["$tsc"]
+      "problemMatcher": ["$tsc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Test",
+      "type": "shell",
+      "command": "yarn test",
+      "problemMatcher": ["$tsc"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
     }
   ]
 }
