@@ -17,16 +17,18 @@ export class MessageSubscriber implements IMessageSubscriber {
   ): void {
     messageType =
       typeof messageType == "string" ? messageType : messageType.type;
-    this._subscriber.on(
-      messageType,
-      async (message: Message<TPayload, void>) => {
-        try {
-          listener(message);
-        } catch (error) {
-          // Todo: log error
+    this._subscriber.on(messageType, (message: Message<TPayload, void>) => {
+      try {
+        const result = listener(message);
+        if (result && result.catch instanceof Function) {
+          result.catch(error => {
+            // Todo: log error
+          });
         }
+      } catch (error) {
+        // Todo: log error
       }
-    );
+    });
   }
   close(): void {
     this._subscriber.close();

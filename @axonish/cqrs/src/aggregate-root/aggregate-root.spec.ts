@@ -1,8 +1,8 @@
 import { TestFixture, Test, Expect, SpyOn, AsyncTest } from "alsatian";
-import { AggregateRoot } from ".";
+import { AggregateRoot, createNewAggregateRoot } from ".";
 import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { DomainEvent } from "../common/domain-event";
-import { ClassOf } from "@axonish/core";
+import { ClassOf, ServiceConfig } from "@axonish/core";
 import {
   clearProjectionHandlers,
   addProjectionHandler
@@ -10,6 +10,7 @@ import {
 import Container, { Token, Inject } from "typedi";
 import { AxonishContext } from "../axonish-context";
 import { AggregateId } from "../common/aggregate-id";
+import { forceConvert } from "../util/force-convert";
 
 @TestFixture("@AggregateRoot decorator")
 export class AggregateRootDecorator {
@@ -443,7 +444,9 @@ export class AggregateRootDecorator {
     );
     Expect(ar.uncommittedEvents.length).toBe(2);
     await ar.commit();
-    Expect(Container.get(AsyncProjectionHandler2).callCount).toBe(2);
+    Expect(
+      ar.serviceConfig!.services.get(AsyncProjectionHandler2).callCount
+    ).toBe(2);
     Expect(ar.uncommittedEvents.length).toBe(0);
   }
   @AsyncTest("`commit` inject dependencies into projections instance")
@@ -490,7 +493,9 @@ export class AggregateRootDecorator {
     );
     Expect(ar.uncommittedEvents.length).toBe(2);
     await ar.commit();
-    Expect(Container.get(AsyncProjectionHandler3).test!.callCount).toBe(2);
+    Expect(
+      ar.serviceConfig!.services.get(AsyncProjectionHandler3).test!.callCount
+    ).toBe(2);
     Expect(ar.uncommittedEvents.length).toBe(0);
   }
   @Test("`uncommit` will clear uncommitted events")
@@ -600,9 +605,10 @@ function createAggregateRoot<T>(
   Type: ClassOf<T>,
   aggregateId: AggregateId | null = "1"
 ): IAggregateRoot & T & HasState {
-  const ar: any = new Type();
+  const ar = forceConvert<IAggregateRoot & T & HasState>(new Type());
+  ar.serviceConfig = new ServiceConfig();
   if (aggregateId !== null) {
     ar.aggregateId = aggregateId;
   }
-  return ar as IAggregateRoot & T & HasState;
+  return ar;
 }

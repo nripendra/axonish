@@ -9,7 +9,6 @@ import {
   ProjectionHandlerType,
   ProjectionFunction
 } from "../projection-handler/metadata";
-import { Container } from "typedi";
 import {
   addAggregateRootEventHandler,
   AggregateRootEventHandlerMetadata,
@@ -44,8 +43,8 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
         this._state = {};
       }
     }
-
-    aggregateId: string;
+    serviceConfig: IServiceConfiguration | null = null;
+    aggregateId: AggregateId;
     _state?: { [key: string]: unknown };
     getState<T>(): T {
       return this._state as T;
@@ -57,6 +56,9 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
     uncommittedEvents: (DomainEvent<unknown> | Snap<unknown>)[] = [];
     lastEventIndex?: number;
     load(eventHistory: Array<DomainEvent<unknown> | Snap<unknown>>): void {
+      if (this.serviceConfig == null) {
+        throw new Error("Service Configuration must be assigned, for loading");
+      }
       this._state = {};
       if (eventHistory) {
         for (let i = 0; i < eventHistory.length; i++) {
@@ -104,8 +106,21 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
       }
     }
     async commit(): Promise<void> {
-      if (this.uncommittedEvents && this.uncommittedEvents.length > 0) {
-        await executeProjections(this.uncommittedEvents, this.getState());
+      if (this.serviceConfig == null) {
+        throw new Error(
+          "Service Configuration must be assigned, for comitting"
+        );
+      }
+      if (
+        this.serviceConfig &&
+        this.uncommittedEvents &&
+        this.uncommittedEvents.length > 0
+      ) {
+        await executeProjections(
+          this.uncommittedEvents,
+          this.getState(),
+          this.serviceConfig
+        );
 
         // Todo: Publish to event bus.
 
@@ -167,8 +182,9 @@ export function AggregateRoot() {
 }
 
 async function executeProjections(
-  events?: DomainEvent<unknown>[],
-  state?: unknown
+  events: DomainEvent<unknown>[],
+  state: unknown,
+  serviceConfig: IServiceConfiguration
 ) {
   if (events) {
     for (const event of events) {
@@ -183,7 +199,7 @@ async function executeProjections(
             cur
           ) => {
             const handlerFunction = cur.handlerFunction;
-            const projectionInstance: ProjectionHandlerType = Container.get(
+            const projectionInstance: ProjectionHandlerType = serviceConfig.services.get(
               cur.projectionClass
             );
             prev.push({ projectionInstance, handlerFunction });
@@ -209,6 +225,7 @@ export function createNewAggregateRoot<T extends IAggregateRoot>(
   serviceConfig: IServiceConfiguration
 ) {
   const aggregateRoot = serviceConfig.services.get(AggregateType);
+  aggregateRoot.serviceConfig = serviceConfig;
   aggregateRoot.aggregateId = aggregateId;
   return aggregateRoot;
 }
