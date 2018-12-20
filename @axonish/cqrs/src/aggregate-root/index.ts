@@ -1,4 +1,9 @@
-import { ClassOf, IServiceConfiguration } from "@axonish/core";
+import {
+  ClassOf,
+  IServiceConfiguration,
+  MessagePublisherToken,
+  Message
+} from "@axonish/core";
 import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { DomainEvent } from "../common/domain-event";
 import { Snap } from "../common/snap";
@@ -116,13 +121,26 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
         this.uncommittedEvents &&
         this.uncommittedEvents.length > 0
       ) {
+        const services = this.serviceConfig.services;
         await executeProjections(
           this.uncommittedEvents,
           this.getState(),
           this.serviceConfig
         );
-
-        // Todo: Publish to event bus.
+        if (services.has(MessagePublisherToken)) {
+          const publisher = services.get(MessagePublisherToken);
+          try {
+            this.uncommittedEvents.forEach(event => {
+              const e = { ...event };
+              // ctx has circular dependency, it cannot be transmitted across wire.
+              delete e.ctx;
+              publisher.publish(event);
+            });
+          } catch (e) {
+            debugger;
+            console.log(e);
+          }
+        }
 
         this.committedEvents.push(...this.uncommittedEvents);
         this.uncommittedEvents.length = 0;

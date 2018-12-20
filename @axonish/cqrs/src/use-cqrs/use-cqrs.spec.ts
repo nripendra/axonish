@@ -17,6 +17,12 @@ import { IEventStoreItem } from "../interfaces/IEventStoreItem";
 import { clearAggregateRootCommandHandler } from "../handles-command/metadata";
 import { useCqrs } from "./use-cqrs";
 import { Token } from "typedi";
+import { clearEventReactorEventHandlers } from "../event-reactor/metadata";
+import { EventReactor } from "../event-reactor";
+import { DomainEvent } from "../common/domain-event";
+import { CommandDescriptor } from "../common/command-descriptor";
+import { HandlesEvent } from "../handles-event";
+import { EventDescriptor } from "../common/event-descriptor";
 
 @TestFixture()
 export class UseCqrsSpecs {
@@ -48,7 +54,7 @@ export class UseCqrsSpecs {
     Expect(serviceConfig.doneCallbacks).not.toBeEmpty();
   }
 
-  @Timeout(2500000)
+  @Timeout(2500)
   @AsyncTest()
   async doneCallbackRegistersCommandHandlers() {
     const serviceConfig = new ServiceConfig();
@@ -87,6 +93,64 @@ export class UseCqrsSpecs {
     await messageBus.channel("Test-Service").send(MyCommand("1"));
     Expect(myCommandCalled).toBe(true);
   }
+
+  @Timeout(2500)
+  @AsyncTest()
+  async doneCallbackRegistersEventReactors() {
+    const serviceConfig = new ServiceConfig();
+    serviceConfig.setServiceName("Test-Service");
+    const events: IEvent[] = [];
+    const fakeEventStore: IEventStore = ({
+      getEventsByLatestSnapShot(aggregateIds: AggregateId[]) {
+        return events;
+      },
+      saveEvents(eventDescriptors: IEventStoreItem[]) {
+        events.push(...eventDescriptors.flatMap(x => x.events));
+      }
+    } as any) as IEventStore;
+    let myCommandCalled = false;
+    let reactorCalled = false;
+    clearAggregateRootCommandHandler();
+    clearEventReactorEventHandlers();
+    @AggregateRoot()
+    class TestAggregateRoot {
+      @HandlesCommand(MyCommand())
+      myCommand(command: MyCommandType) {
+        myCommandCalled = true;
+        const { apply } = command.ctx!;
+        apply(MyEvent({ value: 5 }));
+      }
+    }
+    let done = () => {};
+    const defer = new Promise(resolve => (done = resolve));
+
+    @EventReactor()
+    class TestReactor {
+      @HandlesEvent(MyEvent())
+      myevent() {
+        reactorCalled = true;
+        done();
+      }
+    }
+
+    await useCqrs(serviceConfig, cqrsConfig => {
+      cqrsConfig.parent.services.set({
+        id: EventStoreToken,
+        value: fakeEventStore
+      });
+      cqrsConfig.parent.services.set({
+        id: MessageResponderToken,
+        value: new MessageResponder("Test-Service")
+      });
+    });
+
+    serviceConfig.doneCallbacks.forEach(callback => callback());
+    const messageBus = new MessageBus();
+    await messageBus.channel("Test-Service").send(MyCommand("1"));
+    Expect(myCommandCalled).toBe(true);
+    await defer;
+    Expect(reactorCalled).toBe(true);
+  }
 }
 
 interface MyCommandPayload {
@@ -104,4 +168,19 @@ function MyCommand(
     payload || { value: 0 },
     aggregateId || ""
   ) as MyCommandType;
+}
+
+type MyEvent = DomainEvent<MyCommandPayload>;
+
+function MyEvent(payload?: MyCommandPayload): MyEvent {
+  const descriptor = {
+    type: MyEvent.name,
+    payload,
+    aggregateId: ""
+  } as EventDescriptor<MyCommandPayload>;
+  return new DomainEvent<MyCommandPayload>(
+    descriptor.type,
+    descriptor.payload,
+    descriptor.aggregateId
+  ) as MyEvent;
 }

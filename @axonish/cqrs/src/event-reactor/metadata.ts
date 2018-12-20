@@ -47,3 +47,7 @@ export function getEventReactorEventHandlers(
 ): EventReactorMetadata[] | undefined {
   return eventReactorHandlers[eventType];
 }
+
+export function getAllEventReactorEventHandlers(): EventReactorMetadataDictionary {
+  return { ...eventReactorHandlers };
+}

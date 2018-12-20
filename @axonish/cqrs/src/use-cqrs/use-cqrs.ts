@@ -1,13 +1,14 @@
 import {
   IServiceConfiguration,
   MessagePublisherToken,
-  MessagePublisher
+  MessagePublisher,
+  MessageSubscriberToken,
+  MessageSubscriber
 } from "@axonish/core";
-import IEventStore from "../interfaces/IEventStore";
 import ICqrsConfiguration from "../interfaces/ICqrsConfiguration";
 import { CqrsConfiguration } from "../common/cqrs-configuration";
-import { EventStoreToken } from "../tokens";
 import { registerCommandHandlers } from "./register-command-handlers";
+import { registerEventReactors } from "./register-event-reactors";
 
 type UseCqrsCallback = (cqrsConfig: ICqrsConfiguration) => Promise<void> | void;
 export async function useCqrs(
@@ -20,6 +21,10 @@ export async function useCqrs(
     id: MessagePublisherToken,
     value: new MessagePublisher(serviceConfig.serviceName)
   });
+  serviceConfig.services.set({
+    id: MessageSubscriberToken,
+    value: new MessageSubscriber(serviceConfig.serviceName)
+  });
 
   attachResponders(serviceConfig);
 
@@ -31,5 +36,6 @@ export async function useCqrs(
 function attachResponders(serviceConfig: IServiceConfiguration) {
   serviceConfig.onDone(() => {
     registerCommandHandlers(serviceConfig);
+    registerEventReactors(serviceConfig);
   });
 }
