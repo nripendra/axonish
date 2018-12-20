@@ -13,7 +13,7 @@ export default interface IAggregateRoot {
   lastEventIndex?: number;
   load(eventHistory: Array<DomainEvent<unknown> | Snap<unknown> | null>): void;
 
-  applyEvent<TEventPayload>(
+  dispatchEvent<TEventPayload>(
     event: DomainEvent<TEventPayload> | Snap<TEventPayload>,
     handler: AggregateRootEventHandlerFunction<TEventPayload>,
     isUncommittedEvent: boolean

@@ -74,7 +74,7 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
                 }
               }
             };
-            this.applyEvent(
+            this.dispatchEvent(
               new DomainEvent<unknown>(
                 event.type,
                 event.payload,
@@ -88,7 +88,7 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
         }
       }
     }
-    applyEvent<TEventPayload>(
+    dispatchEvent<TEventPayload>(
       event: DomainEvent<TEventPayload> | Snap<TEventPayload>,
       handler: AggregateRootEventHandlerFunction<TEventPayload>,
       isUncommittedEvent: boolean

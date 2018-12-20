@@ -22,7 +22,7 @@ export class AggregateRootDecorator {
     Expect(ar.uncommittedEvents).toBeDefined();
     Expect(ar.lastEventIndex).toBeDefined();
     Expect(ar.load).toBeDefined();
-    Expect(ar.applyEvent).toBeDefined();
+    Expect(ar.dispatchEvent).toBeDefined();
     Expect(ar.commit).toBeDefined();
     Expect(ar.uncommit).toBeDefined();
     Expect(ar.applySnapShot).toBeDefined();
@@ -70,7 +70,7 @@ export class AggregateRootDecorator {
     @AggregateRoot()
     class TestSubject {}
     const ar = createAggregateRoot(TestSubject);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 0,
@@ -83,7 +83,7 @@ export class AggregateRootDecorator {
       true
     );
     Expect(ar.uncommittedEvents.length).toBe(1);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 0,
@@ -104,7 +104,7 @@ export class AggregateRootDecorator {
     @AggregateRoot()
     class TestSubject {}
     const ar = createAggregateRoot(TestSubject);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
@@ -116,7 +116,7 @@ export class AggregateRootDecorator {
       },
       false
     );
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,
@@ -142,7 +142,7 @@ export class AggregateRootDecorator {
     const ar = createAggregateRoot(TestSubject);
     SpyOn(ar, "onMyEvent");
     SpyOn(ar, "onMyEvent2");
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
@@ -153,7 +153,7 @@ export class AggregateRootDecorator {
       true
     );
     Expect(ar.uncommittedEvents.length).toBe(1);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,
@@ -181,9 +181,9 @@ export class AggregateRootDecorator {
     const ar = createAggregateRoot(TestSubject);
     SpyOn(ar, "onMyEvent");
     SpyOn(ar, "onMyEvent2");
-    ar.applyEvent(null as any, ar.onMyEvent, true);
+    ar.dispatchEvent(null as any, ar.onMyEvent, true);
     Expect(ar.uncommittedEvents!.length).toBe(0);
-    ar.applyEvent(undefined as any, ar.onMyEvent2, true);
+    ar.dispatchEvent(undefined as any, ar.onMyEvent2, true);
     Expect(ar.uncommittedEvents.length).toBe(0);
     Expect(ar.onMyEvent).not.toHaveBeenCalled();
     Expect(ar.onMyEvent2).not.toHaveBeenCalled();
@@ -198,7 +198,7 @@ export class AggregateRootDecorator {
     const ar = createAggregateRoot(TestSubject);
     SpyOn(ar, "onMyEvent");
     SpyOn(ar, "onMyEvent2");
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,
@@ -209,7 +209,7 @@ export class AggregateRootDecorator {
       true
     );
     Expect(ar.uncommittedEvents!.length).toBe(0);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,
@@ -233,7 +233,7 @@ export class AggregateRootDecorator {
     const ar = createAggregateRoot(TestSubject);
     SpyOn(ar, "onMyEvent");
     SpyOn(ar, "onMyEvent2");
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
@@ -244,7 +244,7 @@ export class AggregateRootDecorator {
       false
     );
     Expect(ar.uncommittedEvents.length).toBe(0);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,
@@ -271,7 +271,7 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
@@ -281,7 +281,7 @@ export class AggregateRootDecorator {
       ar.onMyEvent,
       true
     );
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,
@@ -309,7 +309,7 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
@@ -319,7 +319,7 @@ export class AggregateRootDecorator {
       ar.onMyEvent,
       true
     );
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,
@@ -348,7 +348,7 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
@@ -358,7 +358,7 @@ export class AggregateRootDecorator {
       ar.onMyEvent,
       true
     );
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,
@@ -392,7 +392,7 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
@@ -402,7 +402,7 @@ export class AggregateRootDecorator {
       ar.onMyEvent,
       true
     );
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,
@@ -436,7 +436,7 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
@@ -446,7 +446,7 @@ export class AggregateRootDecorator {
       ar.onMyEvent,
       true
     );
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,
@@ -469,7 +469,7 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
@@ -479,7 +479,7 @@ export class AggregateRootDecorator {
       ar.onMyEvent,
       true
     );
-    ar.applyEvent(
+    ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 2,

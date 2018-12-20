@@ -13,9 +13,10 @@ export class AxonishContext {
 
   apply<T>(event?: DomainEvent<T>, isUncomittedEvent: boolean = true) {
     if (event && this.aggregateRoot) {
+      event.ctx = this;
       const eventHandlerMetadata = getAggregateRootEventHandlers(event.type);
       eventHandlerMetadata.forEach(metadata =>
-        forceConvert<IAggregateRoot>(this.aggregateRoot).applyEvent(
+        forceConvert<IAggregateRoot>(this.aggregateRoot).dispatchEvent(
           event,
           metadata.handlerFunction,
           isUncomittedEvent
