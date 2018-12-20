@@ -1,13 +1,13 @@
 import { Message } from "@axonish/core";
 import { AggregateId } from "./aggregate-id";
 import { CommandResponse } from "./command-response";
-import { CommandContext } from "../command-context/command-context";
+import { AxonishContext } from "../axonish-context";
 
 export class Command<TPayload, TResponsePayload> extends Message<
   TPayload,
   CommandResponse<TResponsePayload>
 > {
-  ctx?: CommandContext;
+  ctx?: AxonishContext;
   constructor(
     type: string,
     payload: TPayload,

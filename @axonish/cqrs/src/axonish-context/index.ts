@@ -3,7 +3,7 @@ import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { getAggregateRootEventHandlers } from "../handles-event/metadata";
 import { forceConvert } from "../util/force-convert";
 
-export class CommandContext {
+export class AxonishContext {
   correlationId: string = "";
 
   constructor(public aggregateRoot: unknown) {

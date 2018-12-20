@@ -8,7 +8,7 @@ import { AggregateId } from "../common/aggregate-id";
 import IEvent from "../interfaces/IEvent";
 import { Command } from "../common/command";
 import { HandlesCommand } from "../handles-command";
-import { CommandContext } from "../command-context/command-context";
+import { AxonishContext } from "../axonish-context";
 import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { clearAggregateRootEventHandler } from "../handles-event/metadata";
 import { EventDescriptor } from "../common/event-descriptor";
@@ -107,7 +107,7 @@ export class RespositorySpecs {
     const ar = new MyAggregateRoot();
     ((ar as unknown) as IAggregateRoot).aggregateId = "1";
     const cmd = MyCommand();
-    cmd.ctx = new CommandContext(ar);
+    cmd.ctx = new AxonishContext(ar);
     ar.myCommand(cmd);
     const repository = new Repository(fakeEventStore);
     await repository.save([ar]);

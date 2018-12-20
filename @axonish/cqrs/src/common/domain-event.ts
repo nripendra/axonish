@@ -1,8 +1,10 @@
 import { Message } from "@axonish/core";
 import { AggregateId } from "./aggregate-id";
 import IEvent from "../interfaces/IEvent";
+import { AxonishContext } from "../axonish-context";
 
 export class DomainEvent<T> extends Message<T, void> implements IEvent {
+  ctx?: AxonishContext;
   id?: number | undefined;
   previousEventIndex?: number | undefined;
   index: number = 0;

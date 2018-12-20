@@ -4,7 +4,7 @@ import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { promises } from "fs";
 import Container from "typedi";
 import { AggregateId } from "../common/aggregate-id";
-import { CommandContext } from "../command-context/command-context";
+import { AxonishContext } from "../axonish-context";
 import { getAggregateRootCommandHandlers } from "../handles-command/metadata";
 
 export class CommandExecutor<TPayload, TResponsePayload> {
@@ -22,7 +22,7 @@ export class CommandExecutor<TPayload, TResponsePayload> {
 
       if (aggregateRoot) {
         const handlers = getAggregateRootCommandHandlers(command.type);
-        const ctx = new CommandContext(aggregateRoot);
+        const ctx = new AxonishContext(aggregateRoot);
         command.ctx = ctx;
         const promises: Promise<void>[] = [];
         for (const handler of handlers) {
