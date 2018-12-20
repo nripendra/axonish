@@ -5,7 +5,7 @@ import { AggregateRootEventHandlerFunction } from "../common/aggregate-root-meta
 import { Snap } from "../common/snap";
 
 export default interface IAggregateRoot {
-  aggregateId?: AggregateId;
+  aggregateId: AggregateId;
   getState<T>(): T;
   setState<T>(state: T): void;
   committedEvents: Array<DomainEvent<unknown> | Snap<unknown>>;

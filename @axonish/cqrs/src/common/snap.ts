@@ -1,7 +1,9 @@
 import IEvent from "../interfaces/IEvent";
 import { Message } from "@axonish/core";
+import { AxonishContext } from "../axonish-context";
 
 export class Snap<TPayload> extends Message<TPayload, void> implements IEvent {
+  ctx?: AxonishContext;
   static get EVENT_TYPE() {
     return "Snap";
   }

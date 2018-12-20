@@ -8,6 +8,8 @@ import {
   addProjectionHandler
 } from "../projection-handler/metadata";
 import Container, { Token, Inject } from "typedi";
+import { AxonishContext } from "../axonish-context";
+import { AggregateId } from "../common/aggregate-id";
 
 @TestFixture("@AggregateRoot decorator")
 export class AggregateRootDecorator {
@@ -33,7 +35,7 @@ export class AggregateRootDecorator {
   initializesProperties() {
     @AggregateRoot()
     class TestSubject {}
-    const ar = createAggregateRoot(TestSubject);
+    const ar = createAggregateRoot(TestSubject, null);
     Expect(ar.aggregateId).toBe("");
     Expect(Object.keys(ar._state).length).toBe(0);
     Expect(ar.uncommittedEvents.length).toBe(0);
@@ -70,12 +72,14 @@ export class AggregateRootDecorator {
     @AggregateRoot()
     class TestSubject {}
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 0,
         payload: {},
-        type: "MyEvent"
+        type: "MyEvent",
+        ctx
       } as DomainEvent<unknown>,
       () => {
         return;
@@ -88,7 +92,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 0,
         payload: {},
-        type: "MyEvent2"
+        type: "MyEvent2",
+        ctx
       } as DomainEvent<unknown>,
       () => {
         return;
@@ -104,12 +109,14 @@ export class AggregateRootDecorator {
     @AggregateRoot()
     class TestSubject {}
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
         payload: {},
-        type: "MyEvent"
+        type: "MyEvent",
+        ctx
       } as DomainEvent<unknown>,
       () => {
         return;
@@ -121,7 +128,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyEvent2"
+        type: "MyEvent2",
+        ctx
       } as DomainEvent<unknown>,
       () => {
         return;
@@ -140,6 +148,7 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     SpyOn(ar, "onMyEvent");
     SpyOn(ar, "onMyEvent2");
     ar.dispatchEvent(
@@ -147,7 +156,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 1,
         payload: {},
-        type: "MyEvent"
+        type: "MyEvent",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent,
       true
@@ -158,7 +168,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyEvent2"
+        type: "MyEvent2",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent2,
       true
@@ -196,6 +207,7 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     SpyOn(ar, "onMyEvent");
     SpyOn(ar, "onMyEvent2");
     ar.dispatchEvent(
@@ -203,7 +215,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyEvent2"
+        type: "MyEvent2",
+        ctx
       } as DomainEvent<unknown>,
       null as any,
       true
@@ -214,7 +227,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyEvent2"
+        type: "MyEvent2",
+        ctx
       } as DomainEvent<unknown>,
       undefined as any,
       true
@@ -231,6 +245,7 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     SpyOn(ar, "onMyEvent");
     SpyOn(ar, "onMyEvent2");
     ar.dispatchEvent(
@@ -238,7 +253,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 1,
         payload: {},
-        type: "MyEvent"
+        type: "MyEvent",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent,
       false
@@ -249,7 +265,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyEvent2"
+        type: "MyEvent2",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent2,
       false
@@ -271,12 +288,14 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
         payload: {},
-        type: "MyEvent"
+        type: "MyEvent",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent,
       true
@@ -286,7 +305,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyEvent2"
+        type: "MyEvent2",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent2,
       true
@@ -309,12 +329,14 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
         payload: {},
-        type: "MyEvent"
+        type: "MyEvent",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent,
       true
@@ -324,7 +346,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyEvent2"
+        type: "MyEvent2",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent2,
       true
@@ -348,12 +371,14 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
         payload: {},
-        type: "MyAsyncEvent"
+        type: "MyAsyncEvent",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent,
       true
@@ -363,7 +388,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyAsyncEvent2"
+        type: "MyAsyncEvent2",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent2,
       true
@@ -392,12 +418,14 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
         payload: {},
-        type: "MyEventProjectionInstance"
+        type: "MyEventProjectionInstance",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent,
       true
@@ -407,7 +435,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyEventProjectionInstance2"
+        type: "MyEventProjectionInstance2",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent2,
       true
@@ -436,12 +465,14 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
         payload: {},
-        type: "MyEventProjectionInstance"
+        type: "MyEventProjectionInstance",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent,
       true
@@ -451,7 +482,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyEventProjectionInstance2"
+        type: "MyEventProjectionInstance2",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent2,
       true
@@ -469,12 +501,14 @@ export class AggregateRootDecorator {
       onMyEvent2() {}
     }
     const ar = createAggregateRoot(TestSubject);
+    const ctx = new AxonishContext(ar);
     ar.dispatchEvent(
       {
         aggregateId: "1",
         index: 1,
         payload: {},
-        type: "MyEventProjectionInstance"
+        type: "MyEventProjectionInstance",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent,
       true
@@ -484,7 +518,8 @@ export class AggregateRootDecorator {
         aggregateId: "1",
         index: 2,
         payload: {},
-        type: "MyEventProjectionInstance2"
+        type: "MyEventProjectionInstance2",
+        ctx
       } as DomainEvent<unknown>,
       ar.onMyEvent2,
       true
@@ -562,8 +597,12 @@ class AsyncProjectionHandler3 {
 
 type HasState = { _state: { [key: string]: unknown } };
 function createAggregateRoot<T>(
-  Type: ClassOf<T>
+  Type: ClassOf<T>,
+  aggregateId: AggregateId | null = "1"
 ): IAggregateRoot & T & HasState {
   const ar: any = new Type();
+  if (aggregateId !== null) {
+    ar.aggregateId = aggregateId;
+  }
   return ar as IAggregateRoot & T & HasState;
 }

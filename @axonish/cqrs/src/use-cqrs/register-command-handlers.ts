@@ -12,12 +12,12 @@ export function registerCommandHandlers(serviceConfig: IServiceConfiguration) {
     const commandHandlerMetadata = getAllAggregateRootCommandHandlers();
     for (const commandType in commandHandlerMetadata) {
       responder.on<unknown, unknown>(commandType, (command: unknown) => {
-        const repo =
-          (serviceConfig.services.has(RepositoryToken) &&
-            serviceConfig.services.get<IRepository>(RepositoryToken)) ||
-          new Repository(serviceConfig.services.get(EventStoreToken));
+        const repo = getRepository(serviceConfig);
         // Todo: commandexecutor implementation must be replaceable, with user-defined one.
-        const executor = new CommandExecutor<unknown, unknown>(repo);
+        const executor = new CommandExecutor<unknown, unknown>(
+          repo,
+          serviceConfig
+        );
         const promises: Promise<any>[] = [];
         for (const handlermeta of commandHandlerMetadata[commandType]) {
           promises.push(
@@ -31,4 +31,13 @@ export function registerCommandHandlers(serviceConfig: IServiceConfiguration) {
       });
     }
   }
+}
+function getRepository(serviceConfig: IServiceConfiguration) {
+  const token = RepositoryToken;
+  const eventStoreToken = EventStoreToken;
+  return (
+    (serviceConfig.services.has(token) &&
+      serviceConfig.services.get<IRepository>(token)) ||
+    new Repository(serviceConfig.services.get(eventStoreToken), serviceConfig)
+  );
 }

@@ -13,6 +13,7 @@ import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { clearAggregateRootEventHandler } from "../handles-event/metadata";
 import { EventDescriptor } from "../common/event-descriptor";
 import { IEventStoreItem } from "../interfaces/IEventStoreItem";
+import { ServiceConfig } from "@axonish/core";
 
 @TestFixture("Repository")
 export class RespositorySpecs {
@@ -45,7 +46,7 @@ export class RespositorySpecs {
       }
     } as any) as IEventStore;
 
-    const repository = new Repository(fakeEventStore);
+    const repository = new Repository(fakeEventStore, new ServiceConfig());
     const ar = await repository.find(MyAggregateRoot, "1");
     Expect(ar).not.toBeNull();
     Expect(((ar as unknown) as IAggregateRoot).aggregateId).toBe("1");
@@ -71,7 +72,7 @@ export class RespositorySpecs {
       }
     } as any) as IEventStore;
 
-    const repository = new Repository(fakeEventStore);
+    const repository = new Repository(fakeEventStore, new ServiceConfig());
     const ar = await repository.find(MyAggregateRoot, "1");
     Expect(ar).toBeNull();
   }
@@ -109,7 +110,7 @@ export class RespositorySpecs {
     const cmd = MyCommand();
     cmd.ctx = new AxonishContext(ar);
     ar.myCommand(cmd);
-    const repository = new Repository(fakeEventStore);
+    const repository = new Repository(fakeEventStore, new ServiceConfig());
     await repository.save([ar]);
 
     Expect(events).not.toBeEmpty();

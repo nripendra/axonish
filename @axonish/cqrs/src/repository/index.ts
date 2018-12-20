@@ -1,7 +1,5 @@
 import IRepository from "../interfaces/IRepository";
 import IEventStore from "../interfaces/IEventStore";
-import IEvent from "../interfaces/IEvent";
-import Container from "typedi";
 import { AggregateId } from "../common/aggregate-id";
 import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { DomainEvent } from "../common/domain-event";
@@ -9,26 +7,51 @@ import { Snap } from "../common/snap";
 import { forceConvert } from "../util/force-convert";
 import { isNullOrUndefined } from "util";
 import { IEventStoreItem } from "../interfaces/IEventStoreItem";
+import { AxonishContext, getAxonishContext } from "../axonish-context";
+import { IServiceConfiguration, ClassOf } from "@axonish/core";
+import { createNewAggregateRoot } from "../aggregate-root";
+
+const filterNull = (x: DomainEvent<unknown> | Snap<unknown> | null) =>
+  x != null;
+
+const applyCtx = (ctx: AxonishContext) => (
+  x: DomainEvent<unknown> | Snap<unknown> | null
+) => x && (x.ctx = ctx);
 
 export class Repository implements IRepository {
-  constructor(private eventStore: IEventStore) {}
+  constructor(
+    private eventStore: IEventStore,
+    private serviceConfig: IServiceConfiguration
+  ) {}
 
   async find<TAggregate>(
-    aggregateType: new (...args: unknown[]) => TAggregate,
+    aggregateType: ClassOf<TAggregate>,
     aggregateId: AggregateId
   ): Promise<TAggregate | null> {
+    if (!aggregateId) {
+      return null;
+    }
+
     try {
       const events: Array<
         DomainEvent<unknown> | Snap<unknown> | null
       > = await this.eventStore.getEventsByLatestSnapShot(aggregateId);
       if (events && events.length > 0) {
-        const aggregateRootInstance = Container.get(aggregateType) as unknown;
-        // Need to set initial state....
-        forceConvert<IAggregateRoot>(aggregateRootInstance).load(events);
-        forceConvert<IAggregateRoot>(
-          aggregateRootInstance
-        ).aggregateId = aggregateId;
-        return aggregateRootInstance as TAggregate;
+        const aggregateRootInstance = createNewAggregateRoot(
+          forceConvert<ClassOf<IAggregateRoot>>(aggregateType),
+          aggregateId,
+          this.serviceConfig
+        );
+
+        const ctx = getAxonishContext(
+          aggregateRootInstance,
+          this.serviceConfig
+        );
+
+        events.filter(filterNull).forEach(applyCtx(ctx));
+        // Need to set initial state?
+        aggregateRootInstance.load(events);
+        return forceConvert<TAggregate>(aggregateRootInstance);
       }
     } catch (e) {
       // console.log(e);

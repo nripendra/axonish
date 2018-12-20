@@ -13,6 +13,7 @@ import { clearAggregateRootEventHandler } from "../handles-event/metadata";
 import { clearAggregateRootCommandHandler } from "../handles-command/metadata";
 import { IEventStoreItem } from "../interfaces/IEventStoreItem";
 import { EventDescriptor } from "../common/event-descriptor";
+import { ServiceConfig } from "@axonish/core";
 
 @TestFixture()
 export class CommandExecutorSpecs {
@@ -63,8 +64,12 @@ export class CommandExecutorSpecs {
       }
     } as any) as IEventStore;
 
-    const repository = new Repository(fakeEventStore);
-    const commandExecutor = new CommandExecutor<MyEventPayload, {}>(repository);
+    const config = new ServiceConfig();
+    const repository = new Repository(fakeEventStore, config);
+    const commandExecutor = new CommandExecutor<MyEventPayload, {}>(
+      repository,
+      config
+    );
     await commandExecutor.execute(
       MyAggregateRoot,
       MyCommand("1", { value: 10 })
@@ -116,8 +121,12 @@ export class CommandExecutorSpecs {
       }
     } as any) as IEventStore;
 
-    const repository = new Repository(fakeEventStore);
-    const commandExecutor = new CommandExecutor<MyEventPayload, {}>(repository);
+    const config = new ServiceConfig();
+    const repository = new Repository(fakeEventStore, config);
+    const commandExecutor = new CommandExecutor<MyEventPayload, {}>(
+      repository,
+      config
+    );
     await commandExecutor.execute(
       MyAggregateRoot,
       MyCommand(undefined, { value: 10 })
@@ -168,8 +177,12 @@ export class CommandExecutorSpecs {
       }
     } as any) as IEventStore;
 
-    const repository = new Repository(fakeEventStore);
-    const commandExecutor = new CommandExecutor<MyEventPayload, {}>(repository);
+    const config = new ServiceConfig();
+    const repository = new Repository(fakeEventStore, config);
+    const commandExecutor = new CommandExecutor<MyEventPayload, {}>(
+      repository,
+      config
+    );
     await commandExecutor.execute(
       MyAggregateRoot,
       MyCommand("2", { value: 10 })

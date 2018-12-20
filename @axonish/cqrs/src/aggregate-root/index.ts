@@ -1,4 +1,4 @@
-import { ClassOf } from "@axonish/core";
+import { ClassOf, IServiceConfiguration } from "@axonish/core";
 import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { DomainEvent } from "../common/domain-event";
 import { Snap } from "../common/snap";
@@ -21,6 +21,7 @@ import {
   AggregateRootCommandHandlerDictionary
 } from "../common/aggregate-root-metadata-types";
 import { addAggregateRootCommandHandler } from "../handles-command/metadata";
+import { AggregateId } from "../common/aggregate-id";
 
 function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
   constructor: T
@@ -29,6 +30,7 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
     implements IAggregateRoot {
     constructor(...args: any[]) {
       super(...args);
+      // @ts-ignore: this.aggregateId will be assigned if not assigned
       if (isNullOrUndefined(this.aggregateId)) {
         this.aggregateId = "";
       }
@@ -43,7 +45,7 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
       }
     }
 
-    aggregateId?: string | undefined;
+    aggregateId: string;
     _state?: { [key: string]: unknown };
     getState<T>(): T {
       return this._state as T;
@@ -74,16 +76,7 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
                 }
               }
             };
-            this.dispatchEvent(
-              new DomainEvent<unknown>(
-                event.type,
-                event.payload,
-                event.aggregateType,
-                event.aggregateId || ""
-              ),
-              handlerFunction,
-              false
-            );
+            this.dispatchEvent(event, handlerFunction, false);
           }
         }
       }
@@ -94,6 +87,9 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
       isUncommittedEvent: boolean
     ): void {
       if (!isNullOrUndefined(event) && !isNullOrUndefined(handler)) {
+        if (!event.ctx) {
+          throw new Error("Context must be set before dispatching");
+        }
         const isHistoricalEvent: boolean = isUncommittedEvent === false;
         event.aggregateType = constructor.name;
         event.aggregateId = this.aggregateId;
@@ -206,3 +202,13 @@ async function executeProjections(
   }
 }
 // executeProjections
+
+export function createNewAggregateRoot<T extends IAggregateRoot>(
+  AggregateType: ClassOf<T>,
+  aggregateId: AggregateId,
+  serviceConfig: IServiceConfiguration
+) {
+  const aggregateRoot = serviceConfig.services.get(AggregateType);
+  aggregateRoot.aggregateId = aggregateId;
+  return aggregateRoot;
+}

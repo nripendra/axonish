@@ -16,6 +16,7 @@ import { EventStoreToken } from "../tokens";
 import { IEventStoreItem } from "../interfaces/IEventStoreItem";
 import { clearAggregateRootCommandHandler } from "../handles-command/metadata";
 import { useCqrs } from "./use-cqrs";
+import { Token } from "typedi";
 
 @TestFixture()
 export class UseCqrsSpecs {
@@ -47,7 +48,7 @@ export class UseCqrsSpecs {
     Expect(serviceConfig.doneCallbacks).not.toBeEmpty();
   }
 
-  @Timeout(2500)
+  @Timeout(2500000)
   @AsyncTest()
   async doneCallbackRegistersCommandHandlers() {
     const serviceConfig = new ServiceConfig();
@@ -71,11 +72,14 @@ export class UseCqrsSpecs {
     }
 
     await useCqrs(serviceConfig, cqrsConfig => {
-      cqrsConfig.parent.services.set(EventStoreToken, fakeEventStore);
-      cqrsConfig.parent.services.set(
-        MessageResponderToken,
-        new MessageResponder("Test-Service")
-      );
+      cqrsConfig.parent.services.set({
+        id: EventStoreToken,
+        value: fakeEventStore
+      });
+      cqrsConfig.parent.services.set({
+        id: MessageResponderToken,
+        value: new MessageResponder("Test-Service")
+      });
     });
 
     serviceConfig.doneCallbacks.forEach(callback => callback());
