@@ -14,6 +14,11 @@ import {
   clearProjectionHandlers,
   getProjectionHandlers
 } from "../projection-handler/metadata";
+import { EventReactor } from "../event-reactor";
+import {
+  clearEventReactorEventHandlers,
+  getEventReactorEventHandlers
+} from "../event-reactor/metadata";
 
 @TestFixture("@HandlesEvent decorator")
 export class HandlesEventDecoratorSpecs {
@@ -125,7 +130,7 @@ export class HandlesEventDecoratorSpecs {
   }
 
   @Test()
-  withProjectionRoot() {
+  withProjectionClass() {
     clearProjectionHandlers();
     @Projection()
     class TestSubject {
@@ -140,9 +145,9 @@ export class HandlesEventDecoratorSpecs {
     const prototype = forceConvert<HandlesEventPrototype>(
       TestSubject.prototype
     );
-    // AggregateRoot decorator removes __handlesEvent
+    // Projection decorator removes __handlesEvent
     Expect(prototype.__handlesEvent).not.toBeDefined();
-    // AggregateRoot adds the values of __handlesEvent to metadata dictionary
+    // Projection adds the values of __handlesEvent to metadata dictionary
     const eventHandlers = getProjectionHandlers("MyEvent") || [];
     Expect(eventHandlers.length).toBe(2);
     Expect(eventHandlers[0].handlerFunction).toBe(
@@ -157,6 +162,41 @@ export class HandlesEventDecoratorSpecs {
     );
     Expect(eventHandlers[1].projectionClass).toBeDefined();
     Expect(eventHandlers[1].projectionClass).toBe(TestSubject2);
+  }
+
+  @Test()
+  withEventReactor() {
+    clearEventReactorEventHandlers();
+    @EventReactor()
+    class TestSubject {
+      @HandlesEvent(MyEvent())
+      myeventHandler() {}
+    }
+    @EventReactor()
+    class TestSubject2 {
+      @HandlesEvent(MyEvent())
+      myeventHandler() {}
+    }
+    const prototype = forceConvert<HandlesEventPrototype>(
+      TestSubject.prototype
+    );
+    // EventReactor decorator removes __handlesEvent
+    Expect(prototype.__handlesEvent).not.toBeDefined();
+    // EventReactor adds the values of __handlesEvent to metadata dictionary
+    const eventHandlers = getEventReactorEventHandlers("MyEvent") || [];
+    Expect(eventHandlers.length).toBe(2);
+    Expect(eventHandlers[0].handlerFunction).toBe(
+      TestSubject.prototype.myeventHandler
+    );
+    Expect(eventHandlers[0].eventReactorClass).toBeDefined();
+    Expect(eventHandlers[0].eventReactorClass).toBe(TestSubject);
+
+    Expect((TestSubject2.prototype as any).__handlesEvent).not.toBeDefined();
+    Expect(eventHandlers[1].handlerFunction).toBe(
+      TestSubject2.prototype.myeventHandler
+    );
+    Expect(eventHandlers[1].eventReactorClass).toBeDefined();
+    Expect(eventHandlers[1].eventReactorClass).toBe(TestSubject2);
   }
 }
 
