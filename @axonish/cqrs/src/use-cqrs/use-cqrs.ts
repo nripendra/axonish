@@ -1,4 +1,8 @@
-import { IServiceConfiguration } from "@axonish/core";
+import {
+  IServiceConfiguration,
+  MessagePublisherToken,
+  MessagePublisher
+} from "@axonish/core";
 import IEventStore from "../interfaces/IEventStore";
 import ICqrsConfiguration from "../interfaces/ICqrsConfiguration";
 import { CqrsConfiguration } from "../common/cqrs-configuration";
@@ -12,8 +16,10 @@ export async function useCqrs(
 ): Promise<void> {
   const cqrsConfig = new CqrsConfiguration(serviceConfig);
 
-  const eventStore: IEventStore = null as any;
-  serviceConfig.services.set(EventStoreToken, eventStore);
+  serviceConfig.services.set({
+    id: MessagePublisherToken,
+    value: new MessagePublisher(serviceConfig.serviceName)
+  });
 
   attachResponders(serviceConfig);
 
