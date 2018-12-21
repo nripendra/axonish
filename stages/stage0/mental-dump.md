@@ -4,11 +4,10 @@ We'll have a lot of decorators I'm at least counting 9 of them:
 - @AxonishService
 - @AggregateRoot
   - @HandlesCommand
-  - @AppliesEvent
 - @Projection
-  - @When
-- @Reactor
-  - @HandlesEvent
+- @EventReactor
+- @HandlesEvent
+- @Pipeline
 
 For graph-ql, we'll be using the decorators directly from type-graphql. Need to decide, whether to take type-graphql as peer dependency,
 or a direct dependency. In case of peer dependency, we'll document on how to install and use type-graphql. In case of direct dependency,
