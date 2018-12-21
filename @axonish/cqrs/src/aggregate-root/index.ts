@@ -225,11 +225,14 @@ async function executeProjections(
           },
           []
         );
-        const promises = handlers
-          .map(x =>
-            x.handlerFunction.apply(x.projectionInstance, [state, event])
-          )
-          .filter(x => x && x.then);
+        type ProjectionDescriptor = {
+          projectionInstance: ProjectionHandlerType;
+          handlerFunction: ProjectionFunction;
+        };
+        const applyHandlerFn = (x: ProjectionDescriptor) =>
+          x.handlerFunction.apply(x.projectionInstance, [event]);
+        const isPromise = (x: any) => x && x.then;
+        const promises = handlers.map(applyHandlerFn).filter(isPromise);
         await Promise.all(promises);
       }
     }

@@ -3,7 +3,6 @@ import { DomainEvent } from "../common/domain-event";
 import { forceConvert } from "../util/force-convert";
 
 export type ProjectionFunction = (
-  state: any,
   event: DomainEvent<any>
 ) => Promise<void | {}> | void;
 
