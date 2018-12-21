@@ -26,6 +26,7 @@ import {
 } from "../common/aggregate-root-metadata-types";
 import { addAggregateRootCommandHandler } from "../handles-command/metadata";
 import { AggregateId } from "../common/aggregate-id";
+import { forceConvert } from "../util/force-convert";
 
 function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
   constructor: T
@@ -134,10 +135,9 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
               const e = { ...event };
               // ctx has circular dependency, it cannot be transmitted across wire.
               delete e.ctx;
-              publisher.publish(event);
+              publisher.publish(forceConvert<Message<unknown, unknown>>(e));
             });
           } catch (e) {
-            debugger;
             console.log(e);
           }
         }
