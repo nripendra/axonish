@@ -12,12 +12,12 @@ export interface ICommandPipeline<TPayload, TResponsePayload> {
     command: Command<TPayload, TResponsePayload>
   ): Promise<void> | void;
 
-  comitting(
+  committing(
     aggregateRoot: IAggregateRoot,
     command: Command<TPayload, TResponsePayload>
   ): Promise<void> | void;
 
-  comitted(
+  committed(
     aggregateRoot: IAggregateRoot,
     command: Command<TPayload, TResponsePayload>
   ): Promise<void> | void;
@@ -28,8 +28,8 @@ export interface ICommandPipeline<TPayload, TResponsePayload> {
   ): Promise<void> | void;
 
   error<T extends Error>(
-    error: T,
     aggregateRoot: IAggregateRoot,
-    command: Command<TPayload, TResponsePayload>
+    command: Command<TPayload, TResponsePayload>,
+    error: T
   ): Promise<void> | void;
 }
