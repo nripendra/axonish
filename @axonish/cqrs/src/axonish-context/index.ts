@@ -10,6 +10,7 @@ export class AxonishContext {
   constructor(public aggregateRoot: unknown) {
     this.apply = this.apply.bind(this);
     this.getState = this.getState.bind(this) as any;
+    this.setState = this.setState.bind(this) as any;
   }
 
   apply<T>(event?: DomainEvent<T>, isUncomittedEvent: boolean = true) {
