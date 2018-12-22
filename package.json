@@ -11,12 +11,15 @@
   ],
   "scripts": {
     "build": "tsc -b ./@axonish",
-    "test": "ts-node --project ./tsconfig.json ./run-specs.ts"
+    "test": "ts-node --project ./tsconfig.json ./run-specs.ts",
+    "create-pack": "ts-node ./create-pack.ts"
   },
   "dependencies": {},
   "devDependencies": {
     "typescript": "^3.2.2",
     "ts-node": "^7.0.1",
-    "alsatian": "^2.3.0"
+    "alsatian": "^2.3.0",
+    "shelljs": "^0.8.3",
+    "@types/shelljs": "^0.8.1"
   }
 }

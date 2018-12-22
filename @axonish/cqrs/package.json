@@ -1,5 +1,6 @@
 {
   "name": "@axonish/cqrs",
+  "main": "./dist/index.js",
   "repository": {
     "url": "https://github.com/nripendra/axonish"
   },
