@@ -7,7 +7,7 @@ export function EventReactor() {
     if (constructor.prototype.__handlesEvent) {
       const __handlesEvent: any = constructor.prototype.__handlesEvent;
       for (const key in __handlesEvent) {
-        const handler: ReactorFunction = __handlesEvent[key];
+        const handler: ReactorFunction<unknown> = __handlesEvent[key];
         addEventReactorEventHandler(key, handler, constructor);
       }
       delete constructor.prototype.__handlesEvent;
