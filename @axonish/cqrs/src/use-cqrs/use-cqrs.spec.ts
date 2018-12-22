@@ -97,6 +97,8 @@ export class UseCqrsSpecs {
   @Timeout(2500)
   @AsyncTest()
   async doneCallbackRegistersEventReactors() {
+    let gotState: TestState | null = null;
+    let appliedEvent: IEvent | null = null;
     const serviceConfig = new ServiceConfig();
     serviceConfig.setServiceName("Test-Service");
     const events: IEvent[] = [];
@@ -120,6 +122,12 @@ export class UseCqrsSpecs {
         const { apply } = command.ctx!;
         apply(MyEvent({ value: 5 }));
       }
+
+      @HandlesEvent(MyEvent())
+      onMyEvent(event: MyEvent) {
+        const { setState } = event.ctx!;
+        setState<TestState>({ value: event.payload.value + 10 });
+      }
     }
     let done = () => {};
     const defer = new Promise(resolve => (done = resolve));
@@ -127,8 +135,10 @@ export class UseCqrsSpecs {
     @EventReactor()
     class TestReactor {
       @HandlesEvent(MyEvent())
-      myevent() {
+      myevent(state: TestState, event: IEvent) {
         reactorCalled = true;
+        gotState = state;
+        appliedEvent = event;
         done();
       }
     }
@@ -150,9 +160,14 @@ export class UseCqrsSpecs {
     Expect(myCommandCalled).toBe(true);
     await defer;
     Expect(reactorCalled).toBe(true);
+    Expect(gotState!.value).toBe(15);
+    Expect((appliedEvent!.payload as TestState).value).toBe(5);
   }
 }
 
+interface TestState {
+  value: number;
+}
 interface MyCommandPayload {
   value: number;
 }

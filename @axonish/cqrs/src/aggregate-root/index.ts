@@ -132,10 +132,12 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
           const publisher = services.get(MessagePublisherToken);
           try {
             this.uncommittedEvents.forEach(event => {
-              const e = { ...event };
-              // ctx has circular dependency, it cannot be transmitted across wire.
-              delete e.ctx;
-              publisher.publish(forceConvert<Message<unknown, unknown>>(e));
+              const eventData = event.toEventData();
+              const { getState } = event.ctx!;
+              forceConvert<{ state: unknown }>(eventData).state = getState();
+              publisher.publish(
+                forceConvert<Message<unknown, unknown>>(eventData)
+              );
             });
           } catch (e) {
             console.log(e);

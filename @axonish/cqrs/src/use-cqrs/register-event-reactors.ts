@@ -6,33 +6,34 @@ import {
 import { getAllEventReactorEventHandlers } from "../event-reactor/metadata";
 import { DomainEvent } from "../common/domain-event";
 import { forceConvert } from "../util/force-convert";
-import { getAxonishContext } from "../axonish-context";
+import IEvent from "../interfaces/IEvent";
+
+type HasState = { state: unknown };
+type MessageWithState = Message<IEvent, void> & HasState;
 
 export function registerEventReactors(serviceConfig: IServiceConfiguration) {
   const responder = serviceConfig.services.get(MessageSubscriberToken);
   if (responder) {
     const eventReactorMetadata = getAllEventReactorEventHandlers();
     for (const eventType in eventReactorMetadata) {
-      responder.on<unknown>(
+      responder.on<IEvent>(
         eventType,
-        async (event: Message<unknown, void>) => {
+        async (message: Message<IEvent, void>) => {
           for (const handlermeta of eventReactorMetadata[eventType]) {
             const eventReactorInstance = serviceConfig.services.get(
               handlermeta.eventReactorClass
             );
-            // TODO:
-            // If we need access to aggregateRoot then, We need to
-            // re-fetch aggregateRoot, and recreate the context object.
-            // Specially if we want capability to run event-reactors as
-            // a separate process. This is going to have performance
-            // implications. In case of running in same process, we can
-            // have work-around. Let's wait till implementing a more
-            // realistic example, and see how likely is it that we'd need
-            // to access the aggregate root.
-            const domainEvent = forceConvert<DomainEvent<unknown>>(event);
-            handlermeta.handlerFunction.apply(eventReactorInstance, [
-              domainEvent
-            ]);
+
+            if (message.payload) {
+              const messageWithState = forceConvert<MessageWithState>(message);
+              const state = messageWithState.state;
+              delete messageWithState.state;
+              const event = forceConvert<IEvent>(message);
+              handlermeta.handlerFunction.apply(eventReactorInstance, [
+                state,
+                event
+              ]);
+            }
           }
         }
       );
