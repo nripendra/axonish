@@ -6,4 +6,5 @@ export default interface IMessageSubscriber {
     messageOrType: Message<TPayload, void> | string,
     listener: ResponderCallback<TPayload, void>
   ): void;
+  close(): void;
 }
