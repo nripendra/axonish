@@ -1,17 +1,18 @@
 import { ClassOf } from "@axonish/core";
-import { DomainEvent } from "../common/domain-event";
 import { forceConvert } from "../util/force-convert";
+import IEvent from "../interfaces/IEvent";
 
-export type ReactorFunction = (
-  event: DomainEvent<any>
-) => Promise<void | {}> | void;
+export type ReactorFunction<TState> = (
+  state: TState,
+  event: IEvent
+) => Promise<void> | void;
 
 export type ReactorHandlerType = {
-  [key: string]: ReactorFunction;
+  [key: string]: ReactorFunction<unknown>;
 };
 
 export type EventReactorMetadata = {
-  handlerFunction: ReactorFunction;
+  handlerFunction: ReactorFunction<unknown>;
   eventReactorClass: ClassOf<ReactorHandlerType>;
 };
 
@@ -21,7 +22,7 @@ export type EventReactorMetadataDictionary = {
 const eventReactorHandlers: EventReactorMetadataDictionary = {};
 export function addEventReactorEventHandler(
   eventType: string,
-  handlerFunction: ReactorFunction,
+  handlerFunction: ReactorFunction<unknown>,
   eventReactorClass: unknown
 ) {
   if (eventReactorClass) {
