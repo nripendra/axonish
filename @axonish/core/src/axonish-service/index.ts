@@ -22,11 +22,14 @@ export function AxonishService(serviceName: string): AxonishServiceReturnType {
   return (constructor: ClassOf<IServiceStartup>) => {
     const serviceConfig = new ServiceConfig();
     serviceConfig.setServiceName(serviceName);
-    serviceConfig.services.set(ServiceConfigurationToken, serviceConfig);
-    serviceConfig.services.set(
-      MessageResponderToken,
-      new MessageResponder(serviceName)
-    );
+    serviceConfig.services.set({
+      id: ServiceConfigurationToken,
+      value: serviceConfig
+    });
+    serviceConfig.services.set({
+      id: MessageResponderToken,
+      value: new MessageResponder(serviceName)
+    });
     const requiring_module = module.parent!.filename;
     setGlobOptions({
       cwd: path.dirname(requiring_module),
