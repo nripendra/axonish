@@ -15,6 +15,7 @@ import { useContainer } from "type-graphql";
 import { Container } from "typedi";
 import { MessageBusToken, ApiConfigurationToken } from "../tokens";
 import { MessageBus } from "../message-bus";
+import { topMostModule } from "../common/top-most-module";
 
 export type AxonishApiReturnType = (constructor: ClassOf<IApiStartup>) => void;
 export type AxonishApolloServer = ApolloServer & { express: express.Express };
@@ -36,7 +37,7 @@ export function AxonishApi(): AxonishApiReturnType {
       const config = new ApiConfig();
       config.services.set(MessageBusToken, new MessageBus());
       config.services.set(ApiConfigurationToken, config);
-      const requiring_module = module.parent!.filename;
+      const requiring_module = topMostModule(module)!.filename;
       setGlobOptions({
         cwd: path.dirname(requiring_module),
         ignore: ["**/**/*.d.ts", "**/**/*.map", "**/node_modules/", "**/dist/"]

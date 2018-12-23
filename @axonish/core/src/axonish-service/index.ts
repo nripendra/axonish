@@ -7,6 +7,7 @@ import { ServiceConvention } from "./service-convention";
 import * as path from "path";
 import { ServiceConfigurationToken, MessageResponderToken } from "../tokens";
 import { MessageResponder } from "../message-responder";
+import { topMostModule } from "../common/top-most-module";
 
 export type AxonishServiceReturnType = (
   constructor: ClassOf<IServiceStartup>
@@ -30,7 +31,7 @@ export function AxonishService(serviceName: string): AxonishServiceReturnType {
       id: MessageResponderToken,
       value: new MessageResponder(serviceName)
     });
-    const requiring_module = module.parent!.filename;
+    const requiring_module = topMostModule(module)!.filename;
     setGlobOptions({
       cwd: path.dirname(requiring_module),
       ignore: ["**/**/*.d.ts", "**/**/*.map", "**/node_modules/", "**/dist/"]
