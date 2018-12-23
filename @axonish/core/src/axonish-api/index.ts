@@ -5,7 +5,7 @@ import * as express from "express";
 import {
   typeDefs as exampleTypeDefs,
   resolvers as exampleResolvers
-} from "../test-utils/default-types";
+} from "../common/default-types";
 
 import "reflect-metadata";
 import { resolverConvention, setGlobOptions } from "./resolver-convention";

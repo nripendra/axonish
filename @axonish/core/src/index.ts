@@ -4,6 +4,9 @@ export {
   default as IServiceConfiguration
 } from "./interfaces/IServiceConfiguration";
 export * from "./tokens";
+export { AxonishApi, AxonishApolloServer } from "./axonish-api";
+export { AxonishService } from "./axonish-service";
+export { ServerStartedInfo } from "./interfaces/IApiStartup";
 export { ServiceConfig } from "./axonish-service/service-config";
 export { MessageBus } from "./message-bus";
 export { MessageResponder } from "./message-responder";
