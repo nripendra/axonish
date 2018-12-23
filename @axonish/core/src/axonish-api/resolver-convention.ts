@@ -61,3 +61,12 @@ export function __InjectConventionsForUnitTest(
   }
   _defaultResolverDiscoveryPaths = resolvers;
 }
+
+let rootDir = "";
+export function getRootDir() {
+  return rootDir;
+}
+
+export function __InjectRootDir(dir: string): void {
+  rootDir = dir;
+}

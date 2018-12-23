@@ -33,6 +33,9 @@ import {
 import { Inject } from "typedi";
 import { MessageBusToken } from "../tokens";
 import { MessageResponder } from "../message-responder";
+import { __InjectRootDir } from "../axonish-api/resolver-convention";
+
+__InjectRootDir(__dirname);
 
 const responder = new MessageResponder("Test-Channel");
 
@@ -83,6 +86,7 @@ export class MessageBusTests {
     @AxonishApi()
     class MyTestApi implements IApiStartup {
       async config(apiConfig: IApiConfiguration): Promise<void> {
+        apiConfig.setPort(3001);
         apiConfig.setSchema(
           await buildSchema({
             resolvers: [MyResolver]
@@ -101,7 +105,7 @@ export class MessageBusTests {
     await __AxonishApiAwaitForUnitTest();
     try {
       let response = await gqlFetch<{ hello: TestResponse }>(
-        3000,
+        3001,
         `query {
             hello(input : { message: "ping" }) {
                 received

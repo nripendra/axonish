@@ -8,7 +8,11 @@ import {
 } from "../common/default-types";
 
 import "reflect-metadata";
-import { resolverConvention, setGlobOptions } from "./resolver-convention";
+import {
+  resolverConvention,
+  setGlobOptions,
+  getRootDir
+} from "./resolver-convention";
 import { ClassOf } from "../common/class-of";
 import * as path from "path";
 import { useContainer } from "type-graphql";
@@ -37,9 +41,10 @@ export function AxonishApi(): AxonishApiReturnType {
       const config = new ApiConfig();
       config.services.set(MessageBusToken, new MessageBus());
       config.services.set(ApiConfigurationToken, config);
-      const requiring_module = topMostModule(module)!.filename;
+      const requiring_module =
+        getRootDir() || path.dirname(topMostModule(module)!.filename);
       setGlobOptions({
-        cwd: path.dirname(requiring_module),
+        cwd: requiring_module,
         ignore: ["**/**/*.d.ts", "**/**/*.map", "**/node_modules/", "**/dist/"]
       });
       config.addConvention(resolverConvention);

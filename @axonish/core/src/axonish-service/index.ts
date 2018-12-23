@@ -1,7 +1,11 @@
 import { ClassOf } from "../common/class-of";
 import IServiceStartup from "../interfaces/IServiceStartup";
 import { ServiceConfig } from "./service-config";
-import { directoryConvention, setGlobOptions } from "./directory-convention";
+import {
+  directoryConvention,
+  setGlobOptions,
+  getRootDir
+} from "./directory-convention";
 import "reflect-metadata";
 import { ServiceConvention } from "./service-convention";
 import * as path from "path";
@@ -31,9 +35,10 @@ export function AxonishService(serviceName: string): AxonishServiceReturnType {
       id: MessageResponderToken,
       value: new MessageResponder(serviceName)
     });
-    const requiring_module = topMostModule(module)!.filename;
+    const requiring_module =
+      getRootDir() || path.dirname(topMostModule(module)!.filename);
     setGlobOptions({
-      cwd: path.dirname(requiring_module),
+      cwd: requiring_module,
       ignore: ["**/**/*.d.ts", "**/**/*.map", "**/node_modules/", "**/dist/"]
     });
     serviceConfig.addConvention(directoryConvention);

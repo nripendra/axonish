@@ -3,6 +3,9 @@ import { AxonishService } from ".";
 import IServiceStartup from "../interfaces/IServiceStartup";
 import IServiceConfiguration from "../interfaces/IServiceConfiguration";
 import { __InjectConventionsForUnitTest } from "./directory-convention";
+import { __InjectRootDir } from "./directory-convention";
+
+__InjectRootDir(__dirname);
 
 @TestFixture()
 export class AxonishServiceSpecs {
