@@ -5,17 +5,20 @@ export type QueryHandlerFunction<TQueryPayload, TQueryResponse> = (
 ) => Promise<TQueryResponse> | TQueryResponse;
 
 export type QueryHandlerDictionary<T, R> = {
-  [queryType: string]: QueryHandlerFunction<T, R>;
+  [queryType: string]: {
+    handlerFn: QueryHandlerFunction<T, R>;
+    queryHandlerClass: ClassOf<unknown>;
+  };
 };
 
 const queryHandlers: QueryHandlerDictionary<any, any> = {};
 
 export function addQueryHandler<T, R>(
   queryType: string,
-  handlerFunction: QueryHandlerFunction<T, R>,
-  queryClass: ClassOf<unknown>
+  handlerFn: QueryHandlerFunction<T, R>,
+  queryHandlerClass: ClassOf<unknown>
 ) {
-  queryHandlers[queryType] = handlerFunction;
+  queryHandlers[queryType] = { handlerFn, queryHandlerClass };
 }
 
 export function getQueryHandler<T, R>(queryType: string) {

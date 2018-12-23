@@ -9,6 +9,7 @@ import ICqrsConfiguration from "../interfaces/ICqrsConfiguration";
 import { CqrsConfiguration } from "../common/cqrs-configuration";
 import { registerCommandHandlers } from "./register-command-handlers";
 import { registerEventReactors } from "./register-event-reactors";
+import { registerQueryHandlers } from "./register-query-handlers";
 
 type UseCqrsCallback = (cqrsConfig: ICqrsConfiguration) => Promise<void> | void;
 export async function useCqrs(
@@ -37,5 +38,6 @@ function attachResponders(serviceConfig: IServiceConfiguration) {
   serviceConfig.onDone(() => {
     registerCommandHandlers(serviceConfig);
     registerEventReactors(serviceConfig);
+    registerQueryHandlers(serviceConfig);
   });
 }

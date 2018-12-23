@@ -17,7 +17,9 @@ export class HandlesQueryDecoratorSpecs {
     const keys = Object.keys(handlers);
     Expect(keys.length).toBe(1);
     Expect(keys[0]).toBe(MyQuery.name);
-    Expect(handlers[MyQuery.name]).toBe(TestSubject.prototype.myQueryHandler);
+    Expect(handlers[MyQuery.name].handlerFn).toBe(
+      TestSubject.prototype.myQueryHandler
+    );
   }
 
   @Test()
@@ -43,7 +45,9 @@ export class HandlesQueryDecoratorSpecs {
     const keys = Object.keys(handlers);
     Expect(keys.length).toBe(1);
     Expect(keys[0]).toBe(MyQuery.name);
-    Expect(handlers[MyQuery.name]).toBe(TestSubject2.prototype.myQueryHandler2);
+    Expect(handlers[MyQuery.name].handlerFn).toBe(
+      TestSubject2.prototype.myQueryHandler2
+    );
   }
 
   @Test()

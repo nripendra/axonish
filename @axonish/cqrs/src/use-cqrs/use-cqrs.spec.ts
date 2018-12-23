@@ -4,7 +4,8 @@ import {
   ServiceConfig,
   MessageResponderToken,
   MessageResponder,
-  MessageBus
+  MessageBus,
+  Message
 } from "@axonish/core";
 import IEventStore from "../interfaces/IEventStore";
 import { AggregateRoot } from "../aggregate-root";
@@ -23,6 +24,8 @@ import { DomainEvent } from "../common/domain-event";
 import { CommandDescriptor } from "../common/command-descriptor";
 import { HandlesEvent } from "../handles-event";
 import { EventDescriptor } from "../common/event-descriptor";
+import { clearQueryHandlersForTest } from "../handles-query/metadata";
+import { HandlesQuery } from "../handles-query";
 
 @TestFixture()
 export class UseCqrsSpecs {
@@ -163,6 +166,51 @@ export class UseCqrsSpecs {
     Expect(gotState!.value).toBe(15);
     Expect((appliedEvent!.payload as TestState).value).toBe(5);
   }
+
+  @Timeout(2500)
+  @AsyncTest()
+  async doneCallbackRegistersQueryHandlers() {
+    const serviceConfig = new ServiceConfig();
+    serviceConfig.setServiceName("Test-Service");
+    const events: IEvent[] = [];
+    const fakeEventStore: IEventStore = ({
+      getEventsByLatestSnapShot(aggregateIds: AggregateId[]) {
+        return events;
+      },
+      saveEvents(eventDescriptors: IEventStoreItem[]) {
+        events.push(...eventDescriptors.flatMap(x => x.events));
+      }
+    } as any) as IEventStore;
+    clearQueryHandlersForTest();
+
+    let done = () => {};
+    const defer = new Promise(resolve => (done = resolve));
+    let queryHandlerCalled = false;
+    class TestQueryHandler {
+      @HandlesQuery(MyQuery())
+      myQuery(query: MyQueryType) {
+        queryHandlerCalled = true;
+        done();
+      }
+    }
+
+    await useCqrs(serviceConfig, cqrsConfig => {
+      cqrsConfig.parent.services.set({
+        id: EventStoreToken,
+        value: fakeEventStore
+      });
+      cqrsConfig.parent.services.set({
+        id: MessageResponderToken,
+        value: new MessageResponder("Test-Service")
+      });
+    });
+
+    serviceConfig.doneCallbacks.forEach(callback => callback());
+    const messageBus = new MessageBus();
+    await messageBus.channel("Test-Service").send(MyQuery({ value: 5 }));
+    await defer;
+    Expect(queryHandlerCalled).toBe(true);
+  }
 }
 
 interface TestState {
@@ -198,4 +246,9 @@ function MyEvent(payload?: MyCommandPayload): MyEvent {
     descriptor.payload,
     descriptor.aggregateId
   ) as MyEvent;
+}
+
+type MyQueryType = Message<MyCommandPayload, MyCommandPayload>;
+function MyQuery(payload?: MyCommandPayload) {
+  return new Message<MyCommandPayload, MyCommandPayload>(MyQuery.name, payload);
 }
