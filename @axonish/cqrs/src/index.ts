@@ -23,3 +23,6 @@ export { Command } from "./common/command";
 export { CommandResponse } from "./common/command-response";
 export { DomainEvent } from "./common/domain-event";
 export { Snap } from "./common/snap";
+export { createCommand } from "./util/create-command";
+export { createEvent } from "./util/create-event";
+export { createQuery } from "./util/create-query";
