@@ -540,10 +540,7 @@ class ProjectionHandler {
   constructor() {
     ProjectionHandler.callCount = 0;
   }
-  async onMyEvent<TState, TEventPayload>(
-    state: TState,
-    event: DomainEvent<TEventPayload>
-  ) {
+  async onMyEvent<TState, TEventPayload>(event: DomainEvent<TEventPayload>) {
     ProjectionHandler.callCount++;
   }
 }
@@ -553,7 +550,7 @@ class AsyncProjectionHandler {
   constructor() {
     AsyncProjectionHandler.callCount = 0;
   }
-  onMyAsyncEvent(state: unknown, event: DomainEvent<unknown>) {
+  onMyAsyncEvent(event: DomainEvent<unknown>) {
     return new Promise(function(resolve) {
       setTimeout(() => {
         AsyncProjectionHandler.callCount++;
@@ -568,7 +565,7 @@ class AsyncProjectionHandler2 {
     this.callCount = 0;
   }
   callCount: number;
-  onMyAsyncEvent(state: unknown, event: DomainEvent<{}>) {
+  onMyAsyncEvent(event: DomainEvent<{}>) {
     return new Promise(resolve => {
       setTimeout(() => {
         this.callCount++;
@@ -590,7 +587,7 @@ class AsyncProjectionHandler3 {
   constructor(@Inject(t) public test?: CounterService) {
     this.test && this.test.reset();
   }
-  onMyAsyncEvent(state: unknown, event: DomainEvent<{}>) {
+  onMyAsyncEvent(event: DomainEvent<{}>) {
     return new Promise(resolve => {
       setTimeout(() => {
         this.test!.callCount++;

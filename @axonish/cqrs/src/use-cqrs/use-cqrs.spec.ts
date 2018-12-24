@@ -14,7 +14,7 @@ import { AggregateId } from "../common/aggregate-id";
 import { Command } from "../common/command";
 import IEvent from "../interfaces/IEvent";
 import { EventStoreToken } from "../tokens";
-import { IEventStoreItem } from "../interfaces/IEventStoreItem";
+import IEventStoreItem from "../interfaces/IEventStoreItem";
 import { clearAggregateRootCommandHandler } from "../handles-command/metadata";
 import { useCqrs } from "./use-cqrs";
 import { Token } from "typedi";

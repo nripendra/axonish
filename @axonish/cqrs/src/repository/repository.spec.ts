@@ -12,7 +12,7 @@ import { AxonishContext } from "../axonish-context";
 import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { clearAggregateRootEventHandler } from "../handles-event/metadata";
 import { EventDescriptor } from "../common/event-descriptor";
-import { IEventStoreItem } from "../interfaces/IEventStoreItem";
+import IEventStoreItem from "../interfaces/IEventStoreItem";
 import { ServiceConfig } from "@axonish/core";
 
 @TestFixture("Repository")

@@ -1,4 +1,4 @@
-import { ICommandPipeline } from "../interfaces/ICommandPipeline";
+import ICommandPipeline from "../interfaces/ICommandPipeline";
 import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { Command } from "../common/command";
 import { forceConvert } from "../util/force-convert";

@@ -2,7 +2,7 @@ import { TestFixture, Test, Expect, AsyncTest, FocusTests } from "alsatian";
 import { Pipeline } from ".";
 import { CommandDescriptor } from "../common/command-descriptor";
 import { Command } from "../common/command";
-import { ICommandPipeline } from "../interfaces/ICommandPipeline";
+import ICommandPipeline from "../interfaces/ICommandPipeline";
 import IAggregateRoot from "../interfaces/IAggregateRoot";
 import { getPipelines, clearPipelinesForTest } from "./metadata";
 import { PipelineLifeCycleStage } from "./pipeline-executor";

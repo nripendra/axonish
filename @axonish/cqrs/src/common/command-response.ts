@@ -1,6 +1,5 @@
-export interface CommandResponse<TPayload> {
-    success: boolean;
-    errors?: Error[];
-    payload?: TPayload;
-  }
-  
+export type CommandResponse<TPayload> = {
+  success: boolean;
+  errors?: Error[];
+  payload?: TPayload;
+};

@@ -11,7 +11,7 @@ import { HandlesEvent } from "../handles-event";
 import { DomainEvent } from "../common/domain-event";
 import { clearAggregateRootEventHandler } from "../handles-event/metadata";
 import { clearAggregateRootCommandHandler } from "../handles-command/metadata";
-import { IEventStoreItem } from "../interfaces/IEventStoreItem";
+import IEventStoreItem from "../interfaces/IEventStoreItem";
 import { EventDescriptor } from "../common/event-descriptor";
 import { ServiceConfig } from "@axonish/core";
 

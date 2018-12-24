@@ -6,7 +6,7 @@ import { DomainEvent } from "../common/domain-event";
 import { Snap } from "../common/snap";
 import { forceConvert } from "../util/force-convert";
 import { isNullOrUndefined } from "util";
-import { IEventStoreItem } from "../interfaces/IEventStoreItem";
+import IEventStoreItem from "../interfaces/IEventStoreItem";
 import { AxonishContext, getAxonishContext } from "../axonish-context";
 import { IServiceConfiguration, ClassOf } from "@axonish/core";
 import { createNewAggregateRoot } from "../aggregate-root";
