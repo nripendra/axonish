@@ -13,6 +13,7 @@ export { Pipeline } from "./pipeline";
 export { PipelineLifeCycleStage } from "./pipeline/pipeline-executor";
 export { HandlesCommand } from "./handles-command";
 export { HandlesEvent } from "./handles-event";
+export { HandlesQuery } from "./handles-query";
 export * from "./event-store";
 export { EventReactor } from "./event-reactor";
 export { CommandExecutor } from "./command-executor";
