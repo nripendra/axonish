@@ -1,3 +1,3 @@
 export type ClassOf<T> = {
-  new(...args: unknown[]): T;
+  new(...args: any[]): T;
 };
