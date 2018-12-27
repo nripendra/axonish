@@ -94,8 +94,21 @@ def("pack-cqrs", () => {
   }
 });
 
+
 def("pack", () => {}, ["test", "init-pack", "pack-core", "pack-cqrs"]);
 
+def(
+  "copy",
+  () => {
+    console.log("Copying...");
+    cp(__dirname + "/out/@axonish/core/*.tgz", "c:/packages");
+    console.log("Copied @axonish/core tarball to /packages");
+    cp(__dirname + "/out/@axonish/cqrs/*.tgz", "c:/packages");
+    console.log("Copied @axonish/cqrs tarball to /packages");
+  },
+  ["pack"]
+);
+
 const tasks = process.argv.slice(2);
-tasks.length === 0 ? tasks.push("pack") : "";
+tasks.length === 0 ? tasks.push("copy") : "";
 tasks.map(task => execute(task));
