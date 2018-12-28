@@ -52,8 +52,10 @@ function def(
 /////////////////////////////////////////////////////
 
 def("build", () => {
-  exec("tsc -b ./@axonish/core");
-  return exec("tsc -b ./@axonish/cqrs");
+  rm("-rf", __dirname + "/@axonish/core/dist");
+  rm("-rf", __dirname + "/@axonish/cqrs/dist");
+  exec("tsc -b " + __dirname + "/@axonish/core");
+  return exec("tsc -b " + __dirname + "/@axonish/cqrs");
 });
 def(
   "test",
@@ -93,7 +95,6 @@ def("pack-cqrs", () => {
     cd(__dirname);
   }
 });
-
 
 def("pack", () => {}, ["test", "init-pack", "pack-core", "pack-cqrs"]);
 
