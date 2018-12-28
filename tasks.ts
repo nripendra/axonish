@@ -101,9 +101,13 @@ def(
   "copy",
   () => {
     console.log("Copying...");
+    mkdir("-p", "/packages");
+    mkdir("-p", "c:/packages");
     cp(__dirname + "/out/@axonish/core/*.tgz", "c:/packages");
+    cp(__dirname + "/out/@axonish/core/*.tgz", "/packages");
     console.log("Copied @axonish/core tarball to /packages");
     cp(__dirname + "/out/@axonish/cqrs/*.tgz", "c:/packages");
+    cp(__dirname + "/out/@axonish/cqrs/*.tgz", "/packages");
     console.log("Copied @axonish/cqrs tarball to /packages");
   },
   ["pack"]
