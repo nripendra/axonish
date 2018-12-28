@@ -207,7 +207,6 @@ function MyEvent(payload?: MyPayload): MyEvent {
   return new DomainEvent<MyPayload>(
     "MyEvent",
     descriptor.payload,
-    descriptor.aggregateType,
     descriptor.aggregateId
   );
 }

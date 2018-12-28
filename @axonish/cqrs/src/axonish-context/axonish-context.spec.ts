@@ -84,7 +84,6 @@ function MyEvent(payload?: MyEventPayload): MyEventType {
   const e = new DomainEvent<MyEventPayload>(
     MyEvent.name,
     param.payload,
-    param.aggregateType,
     param.aggregateId
   );
   return e;
