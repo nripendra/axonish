@@ -51,8 +51,17 @@ function def(
 
 /////////////////////////////////////////////////////
 
-def("build", () => exec("yarn build"));
-def("test", () => exec("yarn test"), "build");
+def("build", () => {
+  exec("tsc -b ./@axonish/core");
+  return exec("tsc -b ./@axonish/cqrs");
+});
+def(
+  "test",
+  () => {
+    return exec("ts-node --project ./tsconfig.json ./run-specs.ts");
+  },
+  "build"
+);
 def("init-pack", () => {
   mkdir("-p", __dirname + "/out/@axonish");
   rm("-rf", __dirname + "/out/@axonish");
@@ -67,7 +76,7 @@ def("pack-core", () => {
     rm("-rf", __dirname + "/out/@axonish/core/dist/test-utils");
     rm(__dirname + "/out/@axonish/core/tsconfig.json");
     cd(__dirname + "/out/@axonish/core");
-    return exec("yarn pack");
+    return exec("npm pack");
   } finally {
     cd(__dirname);
   }
@@ -79,7 +88,7 @@ def("pack-cqrs", () => {
     rm("-rf", __dirname + "/out/@axonish/cqrs/src");
     rm(__dirname + "/out/@axonish/cqrs/tsconfig.json");
     cd(__dirname + "/out/@axonish/cqrs");
-    return exec("yarn pack");
+    return exec("npm pack");
   } finally {
     cd(__dirname);
   }

@@ -10,9 +10,9 @@
     "@axonish/*"
   ],
   "scripts": {
-    "build": "tsc -b ./@axonish",
-    "test": "ts-node --project ./tsconfig.json ./run-specs.ts",
-    "create-pack": "ts-node ./create-pack.ts"
+    "build": "ts-node ./tasks.ts build",
+    "test": "ts-node ./tasks.ts test",
+    "create-pack": "ts-node ./tasks.ts pack"
   },
   "dependencies": {},
   "devDependencies": {
