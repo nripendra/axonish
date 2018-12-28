@@ -2,17 +2,27 @@ import { Message } from "@axonish/core";
 import { AggregateId } from "./aggregate-id";
 import IEvent from "../interfaces/IEvent";
 import { AxonishContext } from "../axonish-context";
+import { IAggregateRoot } from "..";
 
 export class DomainEvent<T> extends Message<T, void> implements IEvent {
-  ctx?: AxonishContext;
+  _ctx: AxonishContext | undefined;
+  get ctx() {
+    return this._ctx;
+  }
+  set ctx(value: AxonishContext | undefined) {
+    if (value !== undefined && value !== null) {
+      this._ctx = value;
+      this.aggregateType = (value.aggregateRoot as IAggregateRoot).aggregateTypeName;
+    }
+  }
   id?: number | undefined;
   previousEventIndex?: number | undefined;
+  public aggregateType?: string;
   index: number = 0;
   constructor(
     type: string,
     public payload: T,
-    public aggregateType: string,
-    public aggregateId?: AggregateId
+    public aggregateId: AggregateId
   ) {
     super(type, payload);
   }
@@ -21,9 +31,9 @@ export class DomainEvent<T> extends Message<T, void> implements IEvent {
     const domainEvent = new DomainEvent<T>(
       eventData.type,
       eventData.payload as T,
-      eventData.aggregateType,
       eventData.aggregateId
     );
+    domainEvent.aggregateType = eventData.aggregateType;
     domainEvent.id = eventData.id;
     domainEvent.index = eventData.index;
     domainEvent.previousEventIndex = eventData.previousEventIndex;

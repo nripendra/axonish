@@ -37,4 +37,5 @@ export default interface IAggregateRoot {
    * Logic to create snapshot
    */
   createSnap<TPayload>(): Snap<TPayload> | null;
+  aggregateTypeName: string;
 }

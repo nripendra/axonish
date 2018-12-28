@@ -26,6 +26,7 @@ import { HandlesEvent } from "../handles-event";
 import { EventDescriptor } from "../common/event-descriptor";
 import { clearQueryHandlersForTest } from "../handles-query/metadata";
 import { HandlesQuery } from "../handles-query";
+import { createQuery } from "../util/create-query";
 
 @TestFixture()
 export class UseCqrsSpecs {
@@ -250,5 +251,5 @@ function MyEvent(payload?: MyCommandPayload): MyEvent {
 
 type MyQueryType = Message<MyCommandPayload, MyCommandPayload>;
 function MyQuery(payload?: MyCommandPayload) {
-  return new Message<MyCommandPayload, MyCommandPayload>(MyQuery.name, payload);
+  return createQuery<MyCommandPayload, MyCommandPayload>(MyQuery.name, payload);
 }

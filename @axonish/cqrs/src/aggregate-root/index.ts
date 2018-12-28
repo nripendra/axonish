@@ -27,10 +27,12 @@ import {
 import { addAggregateRootCommandHandler } from "../handles-command/metadata";
 import { AggregateId } from "../common/aggregate-id";
 import { forceConvert } from "../util/force-convert";
+import { AxonishContext } from "../axonish-context";
 
 function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
   constructor: T
 ) {
+  const aggregateTypeName = constructor.name;
   const aggregateRootType = class extends constructor
     implements IAggregateRoot {
     constructor(...args: any[]) {
@@ -166,13 +168,16 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
     }
     createSnap<TEventPayload>(): Snap<TEventPayload> | null {
       if (this.aggregateId) {
-        return new Snap<TEventPayload>(
+        const snap = new Snap<TEventPayload>(
           this.getState<TEventPayload>(),
-          constructor.name,
           this.aggregateId
         );
+        snap.ctx = new AxonishContext(this);
       }
       return null;
+    }
+    get aggregateTypeName() {
+      return aggregateTypeName;
     }
   };
   if (constructor.prototype.__handlesEvent) {
@@ -193,7 +198,9 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
     }
     delete constructor.prototype.__handlesCommand;
   }
-  Object.defineProperty(aggregateRootType, "name", { value: constructor.name });
+  Object.defineProperty(aggregateRootType, "name", {
+    value: aggregateTypeName
+  });
 
   return aggregateRootType;
 }

@@ -4,7 +4,8 @@ import {
   AsyncTest,
   AsyncSetupFixture,
   AsyncTeardownFixture,
-  IgnoreTests
+  IgnoreTests,
+  FocusTests
 } from "alsatian";
 import PgEventStore from ".";
 import { exec, ExecException } from "child_process";
@@ -27,6 +28,7 @@ const connection: ConnectionOptions = {
 // - DomainEvent
 // - Snap
 // - IEvent
+// @FocusTests
 @IgnoreTests()
 @TestFixture()
 export class EventStoreSpecs {
@@ -61,29 +63,18 @@ export class EventStoreSpecs {
     await eventstore.connect(connection);
 
     await eventstore._clear_for_test();
+    const initEvents = [
+      new DomainEvent<{ value: number }>("Create", { value: 1 }, "1"),
+      new DomainEvent<{ value: number }>("ChangeValue", { value: 5 }, "1"),
+      new DomainEvent<{ value: number }>("ChangeValue", { value: 15 }, "1")
+    ].map(x => {
+      x.aggregateType = "MyAggregateType";
+      return x;
+    });
     await eventstore.saveEvents([
       {
         aggregateId: "1",
-        events: [
-          new DomainEvent<{ value: number }>(
-            "Create",
-            { value: 1 },
-            "MyAggregateType",
-            "1"
-          ),
-          new DomainEvent<{ value: number }>(
-            "ChangeValue",
-            { value: 5 },
-            "MyAggregateType",
-            "1"
-          ),
-          new DomainEvent<{ value: number }>(
-            "ChangeValue",
-            { value: 15 },
-            "MyAggregateType",
-            "1"
-          )
-        ],
+        events: initEvents,
         expectedVersion: 0
       }
     ]);
@@ -118,30 +109,19 @@ export class EventStoreSpecs {
     await eventstore.connect(connection);
 
     await eventstore._clear_for_test();
+    const initEvents = [
+      new DomainEvent<{ value: number }>("Create", { value: 1 }, "1"),
+      new DomainEvent<{ value: number }>("ChangeValue", { value: 5 }, "1"),
+      new Snap({ value: 5 }, "1"),
+      new DomainEvent<{ value: number }>("ChangeValue", { value: 15 }, "1")
+    ].map(x => {
+      x.aggregateType = "MyAggregateType";
+      return x;
+    });
     await eventstore.saveEvents([
       {
         aggregateId: "1",
-        events: [
-          new DomainEvent<{ value: number }>(
-            "Create",
-            { value: 1 },
-            "MyAggregateType",
-            "1"
-          ),
-          new DomainEvent<{ value: number }>(
-            "ChangeValue",
-            { value: 5 },
-            "MyAggregateType",
-            "1"
-          ),
-          new Snap({ value: 5 }, "MyAggregateType", "1"),
-          new DomainEvent<{ value: number }>(
-            "ChangeValue",
-            { value: 15 },
-            "MyAggregateType",
-            "1"
-          )
-        ],
+        events: initEvents,
         expectedVersion: 0
       }
     ]);
