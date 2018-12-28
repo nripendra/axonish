@@ -4,6 +4,7 @@ import * as path from "path";
 import * as Glob from "glob";
 
 let _defaultResolverDiscoveryPaths = ["**/resolvers/*.resolver.{js,ts}"];
+let _defaultAuthCheckerDiscoveryPath = "**/auth-checker.{js,ts}";
 let _defaultOptions: { cwd?: string; ignore?: string | string[] } = {
   cwd: path.resolve("."),
   ignore: ["**/**/*.d.ts", "**/**/*.map", "**/node_modules/", "**/dist/"]
@@ -23,9 +24,19 @@ export async function resolverConvention(apiConfig: IApiConfiguration) {
     return visitedGlobs[glob];
   });
 
+  const authCheckerPath = Glob.sync(
+    _defaultAuthCheckerDiscoveryPath,
+    _defaultOptions
+  )[0];
+
+  const authChecker: any = authCheckerPath
+    ? require(pathResolve(_defaultOptions.cwd!, authCheckerPath)).default
+    : undefined;
+
   if (files.length > 0) {
     try {
       const schema = await buildSchema({
+        authChecker,
         resolvers: files
       });
       apiConfig.setSchema(schema);
