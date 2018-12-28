@@ -85,6 +85,8 @@ def("pack-cqrs", () => {
   }
 });
 
+def("pack", () => {}, ["test", "init-pack", "pack-core", "pack-cqrs"]);
+
 def(
   "copy",
   () => {
@@ -94,7 +96,7 @@ def(
     cp(__dirname + "/out/@axonish/cqrs/*.tgz", "~/packages/");
     console.log("Copied @axonish/cqrs tarball to ~/packages/");
   },
-  ["test", "init-pack", "pack-core", "pack-cqrs"]
+  ["pack"]
 );
 
 const tasks = process.argv.slice(2);
