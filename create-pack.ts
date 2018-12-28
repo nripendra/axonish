@@ -89,5 +89,4 @@ def("pack", () => {}, ["test", "init-pack", "pack-core", "pack-cqrs"]);
 
 const tasks = process.argv.slice(2);
 tasks.length === 0 ? tasks.push("pack") : "";
-console.log(tasks);
 tasks.map(task => execute(task));
