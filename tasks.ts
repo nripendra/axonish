@@ -116,4 +116,5 @@ def(
 
 const tasks = process.argv.slice(2);
 tasks.length === 0 ? tasks.push("copy") : "";
+console.log("Running tasks: ", tasks);
 tasks.map(task => execute(task));
