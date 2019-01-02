@@ -58,7 +58,7 @@ function AggregateRootClassDecorator<T extends { new (...args: any[]): {} }>(
       return this._state as T;
     }
     setState<T>(state: T): void {
-      this._state = state;
+      this._state = { ...this._state, ...state };
     }
     committedEvents: (DomainEvent<unknown> | Snap<unknown>)[] = [];
     uncommittedEvents: (DomainEvent<unknown> | Snap<unknown>)[] = [];
