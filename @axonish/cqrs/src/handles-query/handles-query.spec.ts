@@ -102,5 +102,8 @@ type ResponsePayload = {
 type MyQueryType = Message<Payload, ResponsePayload>;
 
 function MyQuery(payload?: Payload): MyQueryType {
-  return new Message<Payload, ResponsePayload>(MyQuery.name, payload);
+  return new Message<Payload, ResponsePayload>(
+    MyQuery.name,
+    payload || { value: 0 }
+  );
 }
