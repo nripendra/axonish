@@ -46,4 +46,7 @@ export async function executePipeline<P, R>(
     }
     throw e;
   }
+  if (promiseResults.length > 0) {
+    await Promise.all(promiseResults);
+  }
 }
