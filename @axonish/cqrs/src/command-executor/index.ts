@@ -51,7 +51,7 @@ export class CommandExecutor<TPayload, TResponsePayload> {
         const executeLifeCycleStage = (
           stage: PipelineLifeCycleStage,
           error?: Error
-        ) => executePipeline(pipelines, stage, aggregateRoot, command);
+        ) => executePipeline(pipelines, stage, aggregateRoot, command, error);
         let saved: boolean = false;
         try {
           await executeLifeCycleStage("before");
