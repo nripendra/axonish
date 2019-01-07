@@ -22,26 +22,28 @@ export async function executePipeline<P, R>(
   command: Command<P, R>,
   error?: Error
 ) {
-  const promiseResults = pipelines.map(async pipeline => {
-    if (pipeline[lifeCycleStage] instanceof Function) {
-      const pipelineLifeCycleFn = forceConvert<PipelineLifeCycleFn<P, R>>(
-        pipeline[lifeCycleStage]
-      );
-      try {
+  const promiseResults: Promise<void>[] = [];
+  try {
+    for (const pipeline of pipelines) {
+      if (pipeline[lifeCycleStage] instanceof Function) {
+        const pipelineLifeCycleFn = forceConvert<PipelineLifeCycleFn<P, R>>(
+          pipeline[lifeCycleStage]
+        );
         const result = pipelineLifeCycleFn.apply(pipeline, [
           aggregateRoot,
           command,
           error
         ]);
         if (result && result.then) {
-          await result;
-        }
-      } catch (e) {
-        if (lifeCycleStage !== "error") {
-          await executePipeline(pipelines, "error", aggregateRoot, command, e);
+          promiseResults.push(result);
         }
       }
     }
-  });
-  await Promise.all(promiseResults);
+  } catch (e) {
+    if (promiseResults.length > 0) {
+      // Wait for previous promises to complete, before failing.
+      await Promise.all(promiseResults);
+    }
+    throw e;
+  }
 }

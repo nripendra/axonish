@@ -72,6 +72,7 @@ export class CommandExecutor<TPayload, TResponsePayload> {
           saved = true;
         } catch (e) {
           aggregateRoot.uncommit();
+          saved = false;
           await executeLifeCycleStage("error", e);
         } finally {
           if (saved) {
