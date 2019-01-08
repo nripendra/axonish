@@ -11,7 +11,7 @@ export function registerCommandHandlers(serviceConfig: IServiceConfiguration) {
   if (responder) {
     const commandHandlerMetadata = getAllAggregateRootCommandHandlers();
     for (const commandType in commandHandlerMetadata) {
-      responder.on<unknown, unknown>(commandType, (command: unknown) => {
+      responder.on<unknown, unknown>(commandType, async (command: unknown) => {
         const repo = getRepository(serviceConfig);
         // Todo: commandexecutor implementation must be replaceable, with user-defined one.
         const executor = new CommandExecutor<unknown, unknown>(
@@ -27,7 +27,9 @@ export function registerCommandHandlers(serviceConfig: IServiceConfiguration) {
             )
           );
         }
-        return Promise.all(promises);
+
+        const result = (await Promise.all(promises)).flat();
+        return result;
       });
     }
   }

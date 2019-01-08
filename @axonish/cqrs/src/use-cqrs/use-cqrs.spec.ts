@@ -1,4 +1,4 @@
-import { TestFixture, Expect, AsyncTest, Timeout } from "alsatian";
+import { TestFixture, Expect, AsyncTest, Timeout, FocusTest } from "alsatian";
 import ICqrsConfiguration from "../interfaces/ICqrsConfiguration";
 import {
   ServiceConfig,
@@ -27,6 +27,7 @@ import { EventDescriptor } from "../common/event-descriptor";
 import { clearQueryHandlersForTest } from "../handles-query/metadata";
 import { HandlesQuery } from "../handles-query";
 import { createQuery } from "../util/create-query";
+import { CommandResponse } from "../common/command-response";
 
 @TestFixture()
 export class UseCqrsSpecs {
@@ -96,6 +97,96 @@ export class UseCqrsSpecs {
     const messageBus = new MessageBus();
     await messageBus.channel("Test-Service").send(MyCommand("1"));
     Expect(myCommandCalled).toBe(true);
+  }
+
+  @Timeout(2500)
+  @AsyncTest()
+  async canGetCommandHandlerResult() {
+    const serviceConfig = new ServiceConfig();
+    const events: IEvent[] = [];
+    const fakeEventStore: IEventStore = ({
+      getEventsByLatestSnapShot(aggregateIds: AggregateId[]) {
+        return events;
+      },
+      saveEvents(eventDescriptors: IEventStoreItem[]) {
+        events.push(...eventDescriptors.flatMap(x => x.events));
+      }
+    } as any) as IEventStore;
+    let myCommandCalled = false;
+    clearAggregateRootCommandHandler();
+    @AggregateRoot()
+    class TestAggregateRoot {
+      @HandlesCommand(MyCommand())
+      myCommand() {
+        myCommandCalled = true;
+        return "hello";
+      }
+    }
+
+    await useCqrs(serviceConfig, cqrsConfig => {
+      cqrsConfig.parent.services.set({
+        id: EventStoreToken,
+        value: fakeEventStore
+      });
+      cqrsConfig.parent.services.set({
+        id: MessageResponderToken,
+        value: new MessageResponder("Test-Service")
+      });
+    });
+
+    serviceConfig.doneCallbacks.forEach(callback => callback());
+    const messageBus = new MessageBus();
+    const result: CommandResponse<string>[] = await messageBus
+      .channel("Test-Service")
+      .send(MyCommand("1"));
+    Expect(myCommandCalled).toBe(true);
+    Expect(result[0].payload).toBe("hello");
+  }
+
+  @Timeout(2500)
+  @AsyncTest()
+  async canGetCommandHandlerErrorResult() {
+    const serviceConfig = new ServiceConfig();
+    const events: IEvent[] = [];
+    const fakeEventStore: IEventStore = ({
+      getEventsByLatestSnapShot(aggregateIds: AggregateId[]) {
+        return events;
+      },
+      saveEvents(eventDescriptors: IEventStoreItem[]) {
+        events.push(...eventDescriptors.flatMap(x => x.events));
+      }
+    } as any) as IEventStore;
+    let myCommandCalled = false;
+    clearAggregateRootCommandHandler();
+    @AggregateRoot()
+    class TestAggregateRoot {
+      @HandlesCommand(MyCommand())
+      myCommand() {
+        myCommandCalled = true;
+        throw new Error("Hello");
+      }
+    }
+
+    await useCqrs(serviceConfig, cqrsConfig => {
+      cqrsConfig.parent.services.set({
+        id: EventStoreToken,
+        value: fakeEventStore
+      });
+      cqrsConfig.parent.services.set({
+        id: MessageResponderToken,
+        value: new MessageResponder("Test-Service")
+      });
+    });
+
+    serviceConfig.doneCallbacks.forEach(callback => callback());
+    const messageBus = new MessageBus();
+    const result: CommandResponse<string>[] = await messageBus
+      .channel("Test-Service")
+      .send(MyCommand("1"));
+    Expect(myCommandCalled).toBe(true);
+    Expect(result[0].success).toBe(false);
+    Expect(result[0].payload).toBe(undefined);
+    Expect(result[0].errors![0].message).toBe("Hello");
   }
 
   @Timeout(2500)
@@ -221,13 +312,13 @@ interface MyCommandPayload {
   value: number;
 }
 
-type MyCommandType = Command<MyCommandPayload, {}>;
+type MyCommandType = Command<MyCommandPayload, string>;
 
 function MyCommand(
   aggregateId?: AggregateId,
   payload?: MyCommandPayload
 ): MyCommandType {
-  return new Command<MyCommandPayload, {}>(
+  return new Command<MyCommandPayload, string>(
     "MyCommand",
     payload || { value: 0 },
     aggregateId || ""

@@ -86,7 +86,13 @@ export class CommandExecutor<TPayload, TResponsePayload> {
           await executeLifeCycleStage("error", e);
           result.push({
             success: false,
-            errors: [e]
+            errors: [
+              {
+                message: e.message,
+                stack: e.stack,
+                name: e.name
+              } as Error
+            ]
           });
         } finally {
           if (saved) {
