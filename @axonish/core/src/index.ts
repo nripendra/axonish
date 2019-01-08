@@ -20,3 +20,5 @@ export { default as IMessageResponder } from "./interfaces/IMessageResponder";
 export { default as IMessagePublisher } from "./interfaces/IMessagePublisher";
 export { default as IMessageSubscriber } from "./interfaces/IMessageSubscriber";
 export { default as IServiceStartup } from "./interfaces/IServiceStartup";
+export { default as IContext } from "./interfaces/IContext";
+export { default as IAuthUser } from "./interfaces/IAuthUser";

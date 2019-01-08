@@ -20,6 +20,8 @@ import { Container } from "typedi";
 import { MessageBusToken, ApiConfigurationToken } from "../tokens";
 import { MessageBus } from "../message-bus";
 import { topMostModule } from "../common/top-most-module";
+import IContext from "../interfaces/IContext";
+import IAuthUser from "../interfaces/IAuthUser";
 
 export type AxonishApiReturnType = (constructor: ClassOf<IApiStartup>) => void;
 export type AxonishApolloServer = ApolloServer & { express: express.Express };
@@ -64,7 +66,14 @@ export function AxonishApi(): AxonishApiReturnType {
           makeExecutableSchema({
             typeDefs: exampleTypeDefs,
             resolvers: exampleResolvers
-          })
+          }),
+        context: ({ request }: { request: any }) => {
+          const ctx: IContext<IAuthUser> = {
+            user: request.user
+          };
+
+          return ctx;
+        }
       });
       const app = express();
       (server as AxonishApolloServer).express = app;
