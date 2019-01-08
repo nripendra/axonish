@@ -1,4 +1,4 @@
-import { AsyncTest, TestFixture, Expect } from "alsatian";
+import { AsyncTest, TestFixture, Expect, FocusTest } from "alsatian";
 import { CommandExecutor } from ".";
 import { AggregateId } from "../common/aggregate-id";
 import IEvent from "../interfaces/IEvent";
@@ -14,6 +14,7 @@ import { clearAggregateRootCommandHandler } from "../handles-command/metadata";
 import IEventStoreItem from "../interfaces/IEventStoreItem";
 import { EventDescriptor } from "../common/event-descriptor";
 import { ServiceConfig } from "@axonish/core";
+import { CommandResponse } from "../common/command-response";
 
 @TestFixture()
 export class CommandExecutorSpecs {
@@ -191,6 +192,126 @@ export class CommandExecutorSpecs {
     Expect(events[1].aggregateId).toBe("2");
     Expect((events[1].payload as any).value).toBe(10);
   }
+
+  @AsyncTest(`Returns result`)
+  async returnsResult() {
+    clearAggregateRootEventHandler();
+    clearAggregateRootCommandHandler();
+    //
+    @AggregateRoot()
+    class MyAggregateRoot {
+      state = 0;
+      @HandlesCommand(MyCommand())
+      myCommand(cmd: Command<MyEventPayload, string>) {
+        const { apply } = cmd.ctx!;
+        apply(MyEvent(cmd.payload));
+        return "hello";
+      }
+
+      @HandlesEvent(MyEvent())
+      onMyEvent(event: MyEventType) {
+        this.state = event.payload.value;
+      }
+    }
+
+    const events: IEvent[] = [
+      {
+        aggregateId: "1",
+        id: 0,
+        index: 0,
+        payload: { value: 1 },
+        previousEventIndex: 0,
+        type: "MyEvent"
+      } as IEvent
+    ];
+
+    const fakeEventStore: any = ({
+      getEventsByLatestSnapShot(aggregateIds: AggregateId[]) {
+        return events.map(x => {
+          x.aggregateId = aggregateIds[0];
+          return x;
+        });
+      },
+      saveEvents(eventDescriptors: IEventStoreItem[]) {
+        events.push(...eventDescriptors.flatMap(x => x.events));
+      }
+    } as any) as IEventStore;
+
+    const config = new ServiceConfig();
+    const repository = new Repository(fakeEventStore, config);
+    const commandExecutor = new CommandExecutor<MyEventPayload, string>(
+      repository,
+      config
+    );
+    const result:
+      | CommandResponse<string>[]
+      | undefined = await commandExecutor.execute(
+      MyAggregateRoot,
+      MyCommand("2", { value: 10 })
+    );
+    Expect(result![0].payload).toBe("hello");
+  }
+
+  @AsyncTest(`Returns failure result`)
+  async returnsFailureResult() {
+    clearAggregateRootEventHandler();
+    clearAggregateRootCommandHandler();
+    //
+    @AggregateRoot()
+    class MyAggregateRoot {
+      state = 0;
+      @HandlesCommand(MyCommand())
+      myCommand(cmd: Command<MyEventPayload, string>) {
+        const { apply } = cmd.ctx!;
+        apply(MyEvent(cmd.payload));
+        throw new Error("Hello");
+      }
+
+      @HandlesEvent(MyEvent())
+      onMyEvent(event: MyEventType) {
+        this.state = event.payload.value;
+      }
+    }
+
+    const events: IEvent[] = [
+      {
+        aggregateId: "1",
+        id: 0,
+        index: 0,
+        payload: { value: 1 },
+        previousEventIndex: 0,
+        type: "MyEvent"
+      } as IEvent
+    ];
+
+    const fakeEventStore: any = ({
+      getEventsByLatestSnapShot(aggregateIds: AggregateId[]) {
+        return events.map(x => {
+          x.aggregateId = aggregateIds[0];
+          return x;
+        });
+      },
+      saveEvents(eventDescriptors: IEventStoreItem[]) {
+        events.push(...eventDescriptors.flatMap(x => x.events));
+      }
+    } as any) as IEventStore;
+
+    const config = new ServiceConfig();
+    const repository = new Repository(fakeEventStore, config);
+    const commandExecutor = new CommandExecutor<MyEventPayload, string>(
+      repository,
+      config
+    );
+    const result:
+      | CommandResponse<string>[]
+      | undefined = await commandExecutor.execute(
+      MyAggregateRoot,
+      MyCommand("2", { value: 10 })
+    );
+    Expect(result![0].success).toBe(false);
+    Expect(result![0].payload).toBe(undefined);
+    Expect(result![0].errors![0].message).toBe("Hello");
+  }
 }
 
 interface MyEventPayload {
@@ -198,7 +319,7 @@ interface MyEventPayload {
 }
 
 type MyEventType = DomainEvent<MyEventPayload>;
-type MyCommand = Command<MyEventPayload, {}>;
+type MyCommand = Command<MyEventPayload, string>;
 
 function MyCommand(
   aggregateId?: AggregateId,

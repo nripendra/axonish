@@ -17,6 +17,8 @@ import {
   executePipeline,
   PipelineLifeCycleStage
 } from "../pipeline/pipeline-executor";
+import { CommandResponse } from "../common/command-response";
+import { forceConvert } from "../util/force-convert";
 
 export class CommandExecutor<TPayload, TResponsePayload> {
   constructor(
@@ -27,7 +29,8 @@ export class CommandExecutor<TPayload, TResponsePayload> {
   async execute(
     AggregateType: ClassOf<any>,
     command: Command<TPayload, TResponsePayload>
-  ) {
+  ): Promise<CommandResponse<TResponsePayload>[]> {
+    const result: CommandResponse<TResponsePayload>[] = [];
     if (command.aggregateId) {
       const aggregateRoot = await this.getAggregateRoot(
         AggregateType,
@@ -44,7 +47,7 @@ export class CommandExecutor<TPayload, TResponsePayload> {
 
         const ctx = getAxonishContext(aggregateRoot, this.serviceConfig);
         command.ctx = ctx;
-        const promises: Promise<void>[] = [];
+        const promises: Promise<CommandResponse<TResponsePayload>>[] = [];
         const pipelines = getPipelines(command.type).map(pipelineType => {
           return this.serviceConfig.services.get(pipelineType);
         });
@@ -56,15 +59,22 @@ export class CommandExecutor<TPayload, TResponsePayload> {
         try {
           await executeLifeCycleStage("before");
           for (const handler of handlers) {
-            const response = handler.handlerFunction.apply(aggregateRoot, [
+            let response = handler.handlerFunction.apply(aggregateRoot, [
               command
             ]);
-            if (response && response.then) {
-              promises.push(response);
+            if (response) {
+              if (!(response.then instanceof Function)) {
+                response = Promise.resolve(response);
+              }
+              promises.push(
+                forceConvert<Promise<CommandResponse<TResponsePayload>>>(
+                  response
+                )
+              );
             }
           }
           if (promises.length > 0) {
-            await Promise.all(promises);
+            result.push(...(await Promise.all(promises)));
           }
           await executeLifeCycleStage("after");
           await executeLifeCycleStage("committing");
@@ -74,6 +84,10 @@ export class CommandExecutor<TPayload, TResponsePayload> {
           aggregateRoot.uncommit();
           saved = false;
           await executeLifeCycleStage("error", e);
+          result.push({
+            success: false,
+            errors: [e]
+          });
         } finally {
           if (saved) {
             await aggregateRoot.commit();
@@ -84,6 +98,20 @@ export class CommandExecutor<TPayload, TResponsePayload> {
         }
       }
     }
+    for (let i = 0; i < result.length; i++) {
+      let item = result[i];
+      if (
+        item.success === undefined ||
+        (item.payload !== undefined && item.errors !== undefined)
+      ) {
+        item = {
+          success: true,
+          payload: forceConvert<TResponsePayload>(item)
+        };
+        result[i] = item;
+      }
+    }
+    return result;
   }
 
   async getAggregateRoot<T extends IAggregateRoot>(
