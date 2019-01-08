@@ -69,7 +69,7 @@ export function AxonishApi(): AxonishApiReturnType {
           }),
         context: ({ request }: { request: any }) => {
           const ctx: IContext<IAuthUser> = {
-            user: request.user
+            user: request && request.user
           };
 
           return ctx;
