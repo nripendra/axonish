@@ -90,7 +90,8 @@ export class CommandExecutor<TPayload, TResponsePayload> {
               {
                 message: e.message,
                 stack: e.stack,
-                name: e.name
+                name: e.name,
+                ...e
               } as Error
             ]
           });
