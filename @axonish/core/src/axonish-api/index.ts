@@ -68,8 +68,9 @@ export function AxonishApi(): AxonishApiReturnType {
             resolvers: exampleResolvers
           }),
         context: ({ req }: { req: any }) => {
-          const ctx: IContext<IAuthUser> = {
-            user: req && req.user
+          const ctx: IContext = {
+            req,
+            config
           };
 
           return ctx;
