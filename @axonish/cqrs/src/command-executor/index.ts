@@ -105,18 +105,26 @@ export class CommandExecutor<TPayload, TResponsePayload> {
         }
       }
     }
-    for (let i = 0; i < result.length; i++) {
-      let item = result[i];
-      if (
-        item.success === undefined ||
-        (item.payload !== undefined && item.errors !== undefined)
-      ) {
-        item = {
-          success: true,
-          payload: forceConvert<TResponsePayload>(item)
-        };
-        result[i] = item;
+    if (result.length > 0) {
+      for (let i = 0; i < result.length; i++) {
+        let item = result[i];
+        if (
+          item === undefined ||
+          item.success === undefined ||
+          (item.payload !== undefined && item.errors !== undefined)
+        ) {
+          item = {
+            success: true,
+            payload: forceConvert<TResponsePayload>(item)
+          };
+          result[i] = item;
+        }
       }
+    } else {
+      result.push({
+        success: true,
+        payload: undefined
+      });
     }
     return result;
   }
