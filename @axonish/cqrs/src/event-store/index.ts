@@ -10,11 +10,6 @@ import { AggregateId } from "../common/aggregate-id";
 const isSnap = (x: IEvent) => x.type === Snap.EVENT_TYPE;
 const isNotSnap = (x: IEvent) => x.type !== Snap.EVENT_TYPE;
 const toIEvent = (x: DomainEvent<unknown> | Snap<unknown>) => x.toEventData();
-const fixIndex = (index: number) => (event: IEvent) => ({
-  ...event,
-  index: ++index,
-  previousEventIndex: index - 1
-});
 const removeIdField = (e: IEvent) => {
   if (e.id === null || e.id === undefined) {
     delete e.id;
@@ -29,6 +24,12 @@ const removeSnapField = (e: IEvent) => {
 };
 const toSnap = (x: IEvent) => Snap.fromEventData(x);
 
+type EventDescriptor = {
+  aggregateId: AggregateId;
+  events: Array<DomainEvent<unknown> | Snap<unknown>>;
+  expectedVersion: number;
+};
+
 export default class PgEventStore extends EventEmitter implements IEventStore {
   private events: PgTable<IEvent> | null = null;
   private snaps: PgTable<Snap<unknown>> | null = null;
@@ -40,28 +41,58 @@ export default class PgEventStore extends EventEmitter implements IEventStore {
     return this as IEventStore;
   }
 
-  async saveEvents(
-    eventDescriptors: Array<{
-      aggregateId: AggregateId;
-      events: Array<DomainEvent<unknown> | Snap<unknown>>;
-      expectedVersion: number;
-    }>
-  ): Promise<void> {
+  async saveEvents(eventDescriptors: Array<EventDescriptor>): Promise<void> {
     const finalEvents: IEvent[] = [];
-    for (const descriptor of eventDescriptors) {
-      const { aggregateId, expectedVersion } = descriptor;
-      const aggregateEvents: IEvent[] = descriptor.events.map(toIEvent);
-      const latestEvent: IEvent | null = await this.getLatestEvent(aggregateId);
-      let index: number = latestEvent ? latestEvent.index : 0;
-      if (expectedVersion !== -1 && index !== expectedVersion) {
-        throw new Error(
-          `Concurrency exception occured while saving events.
-          AggregateId = ${aggregateId} expectedVersion = (${expectedVersion}) actual = (${index})`
-        );
-      }
 
-      finalEvents.push(...aggregateEvents.map(fixIndex(index)));
+    const aggregatedEventDescriptors = eventDescriptors.reduce(
+      (prev, cur) => {
+        const prevEvents = prev[cur.aggregateId] || {
+          aggregateId: cur.aggregateId,
+          events: [],
+          expectedVersion: -1
+        };
+        prevEvents.events.push(...cur.events);
+
+        prevEvents.expectedVersion = Math.max(
+          cur.expectedVersion,
+          prevEvents.expectedVersion
+        );
+        prev[cur.aggregateId] = prevEvents;
+        return prev;
+      },
+      {} as { [id: string]: EventDescriptor }
+    );
+
+    eventDescriptors = [];
+
+    for (const aggregateId in aggregatedEventDescriptors) {
+      eventDescriptors.push(aggregatedEventDescriptors[aggregateId]);
     }
+
+    await Promise.all(
+      eventDescriptors.map(async descriptor => {
+        const { aggregateId, expectedVersion } = descriptor;
+        const aggregateEvents: IEvent[] = descriptor.events.map(toIEvent);
+        const latestEvent: IEvent | null = await this.getLatestEvent(
+          aggregateId
+        );
+        let index: number = latestEvent ? latestEvent.index : 0;
+        if (expectedVersion !== -1 && index !== expectedVersion) {
+          throw new Error(
+            `Concurrency exception occured while saving events.
+          AggregateId = ${aggregateId} expectedVersion = (${expectedVersion}) actual = (${index})`
+          );
+        }
+        index = Math.max(index, 1);
+        finalEvents.push(
+          ...aggregateEvents.map((event, i) => {
+            event.index = index + i;
+            event.previousEventIndex = event.index - 1;
+            return event;
+          })
+        );
+      })
+    );
 
     const chunks: IEvent[][] = chunkArray(finalEvents, 10000);
     if (this.events !== null && this.snaps !== null) {
@@ -79,7 +110,9 @@ export default class PgEventStore extends EventEmitter implements IEventStore {
     }
   }
 
-  async getLatestSnapshot(aggregateId: AggregateId): Promise<Snap<unknown> | null> {
+  async getLatestSnapshot(
+    aggregateId: AggregateId
+  ): Promise<Snap<unknown> | null> {
     if (this.snaps !== null) {
       const data: Snap<unknown> = await this.snaps.findOne(
         { aggregateId },
