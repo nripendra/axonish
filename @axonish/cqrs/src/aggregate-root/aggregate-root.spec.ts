@@ -602,8 +602,13 @@ function createAggregateRoot<T>(
   Type: ClassOf<T>,
   aggregateId: AggregateId | null = "1"
 ): IAggregateRoot & T & HasState {
-  const ar = forceConvert<IAggregateRoot & T & HasState>(new Type());
-  ar.serviceConfig = new ServiceConfig();
+  const ar = forceConvert<IAggregateRoot & T & HasState>(
+    createNewAggregateRoot(
+      forceConvert<ClassOf<IAggregateRoot>>(Type),
+      aggregateId || "",
+      new ServiceConfig()
+    )
+  );
   if (aggregateId !== null) {
     ar.aggregateId = aggregateId;
   }

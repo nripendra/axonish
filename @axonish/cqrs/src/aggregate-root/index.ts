@@ -255,11 +255,12 @@ export function createNewAggregateRoot<T extends IAggregateRoot>(
   serviceConfig: IServiceConfiguration
 ) {
   const aggregateRoot = serviceConfig.services
-    .of(aggregateId)
+    .of({ aggregateId })
     .get(AggregateType);
   aggregateRoot.serviceConfig = serviceConfig;
   aggregateRoot.aggregateId = aggregateId;
-  (aggregateRoot as any)._state = {};
+  const state = (aggregateRoot as any)._state || {};
+  (aggregateRoot as any)._state = state;
   serviceConfig.services.of(aggregateId).reset();
   return aggregateRoot;
 }
