@@ -76,14 +76,14 @@ export default class PgEventStore extends EventEmitter implements IEventStore {
         const latestEvent: IEvent | null = await this.getLatestEvent(
           aggregateId
         );
-        let index: number = latestEvent ? latestEvent.index : 0;
-        if (expectedVersion !== -1 && index !== expectedVersion) {
+        let latestEventIndex: number = latestEvent ? latestEvent.index : 0;
+        if (expectedVersion !== -1 && latestEventIndex !== expectedVersion) {
           throw new Error(
             `Concurrency exception occured while saving events.
-          AggregateId = ${aggregateId} expectedVersion = (${expectedVersion}) actual = (${index})`
+          AggregateId = ${aggregateId} expectedVersion = (${expectedVersion}) actual = (${latestEventIndex})`
           );
         }
-        index = Math.max(index, 1);
+        const index = latestEventIndex + 1;
         finalEvents.push(
           ...aggregateEvents.map((event, i) => {
             event.index = index + i;
