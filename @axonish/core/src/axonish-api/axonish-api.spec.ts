@@ -4,8 +4,8 @@ import {
   __AxonishApiAwaitForUnitTest,
   AxonishApolloServer
 } from ".";
-import IApiStartup, { ServerStartedInfo } from "../interfaces/IApiStartup";
-import IApiConfiguration from "../interfaces/IApiConfiguration";
+import { IApiStartup, ServerStartedInfo } from "../interfaces/IApiStartup";
+import { IApiConfiguration } from "../interfaces/IApiConfiguration";
 import { ApolloServer, gql, makeExecutableSchema } from "apollo-server-express";
 import { gqlFetch } from "../test-utils/gql-fetch";
 import { Books } from "../common/default-types";

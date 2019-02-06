@@ -1,18 +1,18 @@
 import { TestFixture, AsyncTest, Expect, FocusTest } from "alsatian";
 import { Repository } from ".";
-import IEventStore from "../interfaces/IEventStore";
+import { IEventStore } from "../interfaces/IEventStore";
 import { AggregateRoot } from "../aggregate-root";
 import { HandlesEvent } from "../handles-event";
 import { DomainEvent } from "../common/domain-event";
 import { AggregateId } from "../common/aggregate-id";
-import IEvent from "../interfaces/IEvent";
+import { IEvent } from "../interfaces/IEvent";
 import { Command } from "../common/command";
 import { HandlesCommand } from "../handles-command";
 import { AxonishContext } from "../axonish-context";
-import IAggregateRoot from "../interfaces/IAggregateRoot";
+import { IAggregateRoot } from "../interfaces/IAggregateRoot";
 import { clearAggregateRootEventHandler } from "../handles-event/metadata";
 import { EventDescriptor } from "../common/event-descriptor";
-import IEventStoreItem from "../interfaces/IEventStoreItem";
+import { IEventStoreItem } from "../interfaces/IEventStoreItem";
 import { ServiceConfig } from "@axonish/core";
 
 @TestFixture("Repository")

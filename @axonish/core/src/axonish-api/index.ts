@@ -1,4 +1,4 @@
-import IApiStartup from "../interfaces/IApiStartup";
+import { IApiStartup } from "../interfaces/IApiStartup";
 import { ApiConfig } from "./api-config";
 import { ApolloServer, makeExecutableSchema } from "apollo-server-express";
 import * as express from "express";
@@ -20,8 +20,7 @@ import { Container } from "typedi";
 import { MessageBusToken, ApiConfigurationToken } from "../tokens";
 import { MessageBus } from "../message-bus";
 import { topMostModule } from "../common/top-most-module";
-import IContext from "../interfaces/IContext";
-import IAuthUser from "../interfaces/IAuthUser";
+import { IContext } from "../interfaces/IContext";
 
 export type AxonishApiReturnType = (constructor: ClassOf<IApiStartup>) => void;
 export type AxonishApolloServer = ApolloServer & { express: express.Express };

@@ -1,4 +1,4 @@
-import { TestFixture, Expect, FocusTest, Test } from "alsatian";
+import { TestFixture, Expect, Test } from "alsatian";
 import { AggregateRoot } from "../aggregate-root";
 import { HandlesEvent } from "../handles-event";
 import { Command } from "../common/command";

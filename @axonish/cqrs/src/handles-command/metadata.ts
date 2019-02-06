@@ -1,6 +1,5 @@
-import { Command } from "../common/command";
 import { ClassOf } from "@axonish/core";
-import IAggregateRoot from "../interfaces/IAggregateRoot";
+import { IAggregateRoot } from "../interfaces/IAggregateRoot";
 import { AggregateRootCommandHandlerFunction } from "../common/aggregate-root-metadata-types";
 
 export type AggregateRootCommandHandlerType = {

@@ -1,6 +1,5 @@
-import { DomainEvent } from "../common/domain-event";
 import { ClassOf } from "@axonish/core";
-import IAggregateRoot from "../interfaces/IAggregateRoot";
+import { IAggregateRoot } from "../interfaces/IAggregateRoot";
 import { AggregateRootEventHandlerFunction } from "../common/aggregate-root-metadata-types";
 
 export type AggregateRootEventHandlerType = {

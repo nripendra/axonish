@@ -1,6 +1,6 @@
 import { AggregateId } from "../common/aggregate-id";
 
-export default interface IEvent {
+export interface IEvent {
   id?: number;
   aggregateId: AggregateId;
   index: number;

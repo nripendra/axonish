@@ -1,12 +1,12 @@
-import IRepository from "../interfaces/IRepository";
-import IEventStore from "../interfaces/IEventStore";
+import { IRepository } from "../interfaces/IRepository";
+import { IEventStore } from "../interfaces/IEventStore";
 import { AggregateId } from "../common/aggregate-id";
-import IAggregateRoot from "../interfaces/IAggregateRoot";
+import { IAggregateRoot } from "../interfaces/IAggregateRoot";
 import { DomainEvent } from "../common/domain-event";
 import { Snap } from "../common/snap";
 import { forceConvert } from "../util/force-convert";
 import { isNullOrUndefined } from "util";
-import IEventStoreItem from "../interfaces/IEventStoreItem";
+import { IEventStoreItem } from "../interfaces/IEventStoreItem";
 import { AxonishContext, getAxonishContext } from "../axonish-context";
 import { IServiceConfiguration, ClassOf } from "@axonish/core";
 import { createNewAggregateRoot } from "../aggregate-root";

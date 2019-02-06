@@ -1,6 +1,6 @@
 import { Token } from "typedi";
-import IEventStore from "./interfaces/IEventStore";
-import IRepository from "./interfaces/IRepository";
+import { IEventStore } from "./interfaces/IEventStore";
+import { IRepository } from "./interfaces/IRepository";
 
 export const EventStoreToken = new Token<IEventStore>();
 

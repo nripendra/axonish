@@ -1,14 +1,8 @@
 import { Command } from "../common/command";
-import IRepository from "../interfaces/IRepository";
-import IAggregateRoot from "../interfaces/IAggregateRoot";
-import { promises } from "fs";
-import Container from "typedi";
+import { IRepository } from "../interfaces/IRepository";
+import { IAggregateRoot } from "../interfaces/IAggregateRoot";
 import { AggregateId } from "../common/aggregate-id";
-import {
-  AxonishContext,
-  getAxonishContext,
-  disposeContext
-} from "../axonish-context";
+import { getAxonishContext, disposeContext } from "../axonish-context";
 import { getAggregateRootCommandHandlers } from "../handles-command/metadata";
 import { IServiceConfiguration, ServiceConfig, ClassOf } from "@axonish/core";
 import { createNewAggregateRoot } from "../aggregate-root";

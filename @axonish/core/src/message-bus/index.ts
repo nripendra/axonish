@@ -1,5 +1,5 @@
-import IMessageBus from "../interfaces/IMessageBus";
-import IChannel from "../interfaces/IChannel";
+import { IMessageBus } from "../interfaces/IMessageBus";
+import { IChannel } from "../interfaces/IChannel";
 import { Channel } from "../channel";
 
 export class MessageBus implements IMessageBus {

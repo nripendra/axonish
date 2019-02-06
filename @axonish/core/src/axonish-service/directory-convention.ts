@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as Glob from "glob";
-import IServiceConfiguration from "../interfaces/IServiceConfiguration";
+import { IServiceConfiguration } from "../interfaces/IServiceConfiguration";
 
 let _defaultDiscoveryPaths = [
   "**/read-model/*.{js,ts}",

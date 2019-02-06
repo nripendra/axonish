@@ -1,5 +1,5 @@
 import { DomainEvent } from "../common/domain-event";
-import IAggregateRoot from "../interfaces/IAggregateRoot";
+import { IAggregateRoot } from "../interfaces/IAggregateRoot";
 import { getAggregateRootEventHandlers } from "../handles-event/metadata";
 import { forceConvert } from "../util/force-convert";
 import { IServiceConfiguration } from "@axonish/core";

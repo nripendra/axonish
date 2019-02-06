@@ -1,6 +1,6 @@
 import { AggregateId } from "../common/aggregate-id";
 
-export default interface IRepository {
+export interface IRepository {
   find<TAggregate>(
     aggregateType: new (...args: unknown[]) => TAggregate,
     aggregateId: AggregateId

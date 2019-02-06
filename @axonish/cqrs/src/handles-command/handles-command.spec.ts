@@ -1,7 +1,6 @@
 import { TestFixture, Test, Expect, FocusTests } from "alsatian";
 import { HandlesCommandPrototype, HandlesCommand } from ".";
 import { Command } from "../common/command";
-import { AggregateId } from "../common/aggregate-id";
 import { forceConvert } from "../util/force-convert";
 import { AggregateRoot } from "../aggregate-root";
 import {

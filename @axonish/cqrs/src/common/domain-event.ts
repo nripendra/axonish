@@ -1,6 +1,6 @@
 import { Message } from "@axonish/core";
 import { AggregateId } from "./aggregate-id";
-import IEvent from "../interfaces/IEvent";
+import { IEvent } from "../interfaces/IEvent";
 import { AxonishContext } from "../axonish-context";
 import { IAggregateRoot } from "..";
 

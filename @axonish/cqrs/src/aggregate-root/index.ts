@@ -4,10 +4,9 @@ import {
   MessagePublisherToken,
   Message
 } from "@axonish/core";
-import IAggregateRoot from "../interfaces/IAggregateRoot";
+import { IAggregateRoot } from "../interfaces/IAggregateRoot";
 import { DomainEvent } from "../common/domain-event";
 import { Snap } from "../common/snap";
-import IEvent from "../interfaces/IEvent";
 import { isNullOrUndefined } from "util";
 import {
   getProjectionHandlers,

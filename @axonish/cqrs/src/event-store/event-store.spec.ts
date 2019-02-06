@@ -7,7 +7,7 @@ import {
   IgnoreTests,
   FocusTests
 } from "alsatian";
-import PgEventStore from ".";
+import { PgEventStore } from ".";
 import { exec, ExecException } from "child_process";
 import { PgDb, ConnectionOptions } from "pogi";
 import { join } from "path";

@@ -1,5 +1,5 @@
 import { TestFixture, Expect, AsyncTest, Timeout, FocusTest } from "alsatian";
-import ICqrsConfiguration from "../interfaces/ICqrsConfiguration";
+import { ICqrsConfiguration } from "../interfaces/ICqrsConfiguration";
 import {
   ServiceConfig,
   MessageResponderToken,
@@ -7,21 +7,19 @@ import {
   MessageBus,
   Message
 } from "@axonish/core";
-import IEventStore from "../interfaces/IEventStore";
+import { IEventStore } from "../interfaces/IEventStore";
 import { AggregateRoot } from "../aggregate-root";
 import { HandlesCommand } from "../handles-command";
 import { AggregateId } from "../common/aggregate-id";
 import { Command } from "../common/command";
-import IEvent from "../interfaces/IEvent";
+import { IEvent } from "../interfaces/IEvent";
 import { EventStoreToken } from "../tokens";
-import IEventStoreItem from "../interfaces/IEventStoreItem";
+import { IEventStoreItem } from "../interfaces/IEventStoreItem";
 import { clearAggregateRootCommandHandler } from "../handles-command/metadata";
 import { useCqrs } from "./use-cqrs";
-import { Token } from "typedi";
 import { clearEventReactorEventHandlers } from "../event-reactor/metadata";
 import { EventReactor } from "../event-reactor";
 import { DomainEvent } from "../common/domain-event";
-import { CommandDescriptor } from "../common/command-descriptor";
 import { HandlesEvent } from "../handles-event";
 import { EventDescriptor } from "../common/event-descriptor";
 import { clearQueryHandlersForTest } from "../handles-query/metadata";

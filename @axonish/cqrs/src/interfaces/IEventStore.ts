@@ -1,9 +1,9 @@
-import IEvent from "./IEvent";
+import { IEvent } from "./IEvent";
 import { Snap } from "../common/snap";
 import { AggregateId } from "../common/aggregate-id";
 import { DomainEvent } from "../common/domain-event";
-import IEventStoreItem from "./IEventStoreItem";
-export default interface IEventStore {
+import { IEventStoreItem } from "./IEventStoreItem";
+export interface IEventStore {
   connect(connection: unknown): Promise<IEventStore>;
   saveEvents(eventDescriptors: Array<IEventStoreItem>): Promise<void>;
   getLatestSnapshot(aggregateId: AggregateId): Promise<Snap<unknown> | null>;

@@ -1,4 +1,4 @@
-import ICommandPipeline from "../interfaces/ICommandPipeline";
+import { ICommandPipeline } from "../interfaces/ICommandPipeline";
 import { ClassOf } from "@axonish/core";
 
 type PipelineDictionary<T, T2> = {

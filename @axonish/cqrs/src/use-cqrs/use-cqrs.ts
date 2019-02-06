@@ -5,7 +5,7 @@ import {
   MessageSubscriberToken,
   MessageSubscriber
 } from "@axonish/core";
-import ICqrsConfiguration from "../interfaces/ICqrsConfiguration";
+import { ICqrsConfiguration } from "../interfaces/ICqrsConfiguration";
 import { CqrsConfiguration } from "../common/cqrs-configuration";
 import { registerCommandHandlers } from "./register-command-handlers";
 import { registerEventReactors } from "./register-event-reactors";

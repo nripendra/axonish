@@ -1,7 +1,7 @@
 import { ServiceConvention } from "../axonish-service/service-convention";
 import Container from "typedi";
 
-export default interface IServiceConfiguration {
+export interface IServiceConfiguration {
   readonly serviceName: string;
   addConvention(convention: ServiceConvention): void;
 

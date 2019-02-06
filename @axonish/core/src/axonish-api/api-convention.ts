@@ -1,3 +1,5 @@
-import IApiConfiguration from "../interfaces/IApiConfiguration";
+import { IApiConfiguration } from "../interfaces/IApiConfiguration";
 
-export type ApiConvention = (apiConfig: IApiConfiguration) => void | Promise<void>;
+export type ApiConvention = (
+  apiConfig: IApiConfiguration
+) => void | Promise<void>;

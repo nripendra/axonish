@@ -1,6 +1,6 @@
 import { IServiceConfiguration, MessageResponderToken } from "@axonish/core";
 import { CommandExecutor } from "../command-executor";
-import IRepository from "../interfaces/IRepository";
+import { IRepository } from "../interfaces/IRepository";
 import { Command } from "../common/command";
 import { Repository } from "../repository";
 import { EventStoreToken, RepositoryToken } from "../tokens";

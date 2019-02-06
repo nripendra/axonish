@@ -1,6 +1,6 @@
-import IServiceConfiguration from "./IServiceConfiguration";
+import { IServiceConfiguration } from "./IServiceConfiguration";
 
-export default interface IServiceStartup {
+export interface IServiceStartup {
   config(serviceConfig: IServiceConfiguration): void | Promise<void>;
 
   onError(err: any): void;

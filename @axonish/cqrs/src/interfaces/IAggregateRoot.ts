@@ -1,11 +1,11 @@
 import { AggregateId } from "../common/aggregate-id";
 import { DomainEvent } from "../common/domain-event";
-import IEvent from "./IEvent";
+import { IEvent } from "./IEvent";
 import { AggregateRootEventHandlerFunction } from "../common/aggregate-root-metadata-types";
 import { Snap } from "../common/snap";
 import { IServiceConfiguration } from "@axonish/core";
 
-export default interface IAggregateRoot {
+export interface IAggregateRoot {
   serviceConfig: IServiceConfiguration | null;
   aggregateId: AggregateId;
   getState<T>(): T;

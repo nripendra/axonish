@@ -1,7 +1,7 @@
-import IAggregateRoot from "./IAggregateRoot";
+import { IAggregateRoot } from "./IAggregateRoot";
 import { Command } from "../common/command";
 
-export default interface ICommandPipeline<TPayload, TResponsePayload> {
+export interface ICommandPipeline<TPayload, TResponsePayload> {
   before(
     aggregateRoot: IAggregateRoot,
     command: Command<TPayload, TResponsePayload>

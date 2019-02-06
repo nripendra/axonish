@@ -1,7 +1,8 @@
-import IApiConfiguration from "../interfaces/IApiConfiguration";
+import { IApiConfiguration } from "../interfaces/IApiConfiguration";
 import { GraphQLSchema } from "graphql";
 import { ApiConvention } from "./api-convention";
 import Container from "typedi";
+
 export class ApiConfig implements IApiConfiguration {
   private _port: number = 3000;
   get port() {

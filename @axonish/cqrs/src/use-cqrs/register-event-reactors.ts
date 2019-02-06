@@ -4,9 +4,8 @@ import {
   Message
 } from "@axonish/core";
 import { getAllEventReactorEventHandlers } from "../event-reactor/metadata";
-import { DomainEvent } from "../common/domain-event";
 import { forceConvert } from "../util/force-convert";
-import IEvent from "../interfaces/IEvent";
+import { IEvent } from "../interfaces/IEvent";
 
 type HasState = { state: unknown };
 type MessageWithState = Message<IEvent, void> & HasState;

@@ -11,10 +11,9 @@ import {
 } from "alsatian";
 import { MessageBus } from ".";
 import { Message } from "../common/message";
-import * as cote from "cote";
-import IApiStartup, { ServerStartedInfo } from "../interfaces/IApiStartup";
-import IMessageBus from "../interfaces/IMessageBus";
-import IApiConfiguration from "../interfaces/IApiConfiguration";
+import { IApiStartup, ServerStartedInfo } from "../interfaces/IApiStartup";
+import { IMessageBus } from "../interfaces/IMessageBus";
+import { IApiConfiguration } from "../interfaces/IApiConfiguration";
 import {
   AxonishApolloServer,
   AxonishApi,

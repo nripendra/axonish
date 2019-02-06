@@ -1,4 +1,4 @@
-import IMessagePublisher from "../interfaces/IMessagePublisher";
+import { IMessagePublisher } from "../interfaces/IMessagePublisher";
 import { Message } from "../common/message";
 import { Publisher } from "cote";
 

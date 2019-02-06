@@ -1,5 +1,5 @@
 import { ClassOf } from "../common/class-of";
-import IServiceStartup from "../interfaces/IServiceStartup";
+import { IServiceStartup } from "../interfaces/IServiceStartup";
 import { ServiceConfig } from "./service-config";
 import {
   directoryConvention,

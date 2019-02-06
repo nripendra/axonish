@@ -1,10 +1,10 @@
-export { default as IAggregateRoot } from "./interfaces/IAggregateRoot";
-export { default as ICommandPipeline } from "./interfaces/ICommandPipeline";
-export { default as ICqrsConfiguration } from "./interfaces/ICqrsConfiguration";
-export { default as IEvent } from "./interfaces/IEvent";
-export { default as IEventStore } from "./interfaces/IEventStore";
-export { default as IEventStoreItem } from "./interfaces/IEventStoreItem";
-export { default as IRepository } from "./interfaces/IRepository";
+export { IAggregateRoot } from "./interfaces/IAggregateRoot";
+export { ICommandPipeline } from "./interfaces/ICommandPipeline";
+export { ICqrsConfiguration } from "./interfaces/ICqrsConfiguration";
+export { IEvent } from "./interfaces/IEvent";
+export { IEventStore } from "./interfaces/IEventStore";
+export { IEventStoreItem } from "./interfaces/IEventStoreItem";
+export { IRepository } from "./interfaces/IRepository";
 export * from "./tokens";
 export * from "./use-cqrs/use-cqrs";
 export * from "./repository";

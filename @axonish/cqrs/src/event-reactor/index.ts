@@ -1,4 +1,3 @@
-import { AggregateRootEventHandlerDictionary } from "../common/aggregate-root-metadata-types";
 import { addEventReactorEventHandler, ReactorFunction } from "./metadata";
 import { ClassOf } from "@axonish/core";
 

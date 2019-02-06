@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import { PgDb, PgTable, ConnectionOptions } from "pogi";
-import IEvent from "../interfaces/IEvent";
-import IEventStore from "../interfaces/IEventStore";
+import { IEvent } from "../interfaces/IEvent";
+import { IEventStore } from "../interfaces/IEventStore";
 import { Snap } from "../common/snap";
 import { chunkArray } from "../util/chunk-array";
 import { DomainEvent } from "../common/domain-event";
@@ -30,7 +30,7 @@ type EventDescriptor = {
   expectedVersion: number;
 };
 
-export default class PgEventStore extends EventEmitter implements IEventStore {
+export class PgEventStore extends EventEmitter implements IEventStore {
   private events: PgTable<IEvent> | null = null;
   private snaps: PgTable<Snap<unknown>> | null = null;
 

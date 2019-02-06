@@ -1,4 +1,4 @@
-import IMessageSubscriber from "../interfaces/IMessageSubscriber";
+import { IMessageSubscriber } from "../interfaces/IMessageSubscriber";
 import { Message } from "../common/message";
 import { ResponderCallback } from "../common/responder-callback";
 import * as cote from "cote";

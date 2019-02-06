@@ -1,7 +1,7 @@
 import { TestFixture, AsyncTest, Expect, FocusTests } from "alsatian";
 import { AxonishService } from ".";
-import IServiceStartup from "../interfaces/IServiceStartup";
-import IServiceConfiguration from "../interfaces/IServiceConfiguration";
+import { IServiceStartup } from "../interfaces/IServiceStartup";
+import { IServiceConfiguration } from "../interfaces/IServiceConfiguration";
 import { __InjectConventionsForUnitTest } from "./directory-convention";
 import { __InjectRootDir } from "./directory-convention";
 

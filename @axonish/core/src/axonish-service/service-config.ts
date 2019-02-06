@@ -1,4 +1,4 @@
-import IServiceConfiguration from "../interfaces/IServiceConfiguration";
+import { IServiceConfiguration } from "../interfaces/IServiceConfiguration";
 import { ServiceConvention } from "./service-convention";
 import Container from "typedi";
 

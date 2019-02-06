@@ -1,6 +1,6 @@
 import { TestFixture, Test, Expect, SpyOn, AsyncTest } from "alsatian";
 import { AggregateRoot, createNewAggregateRoot } from ".";
-import IAggregateRoot from "../interfaces/IAggregateRoot";
+import { IAggregateRoot } from "../interfaces/IAggregateRoot";
 import { DomainEvent } from "../common/domain-event";
 import { ClassOf, ServiceConfig } from "@axonish/core";
 import {

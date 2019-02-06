@@ -1,4 +1,4 @@
-import IApiConfiguration from "../interfaces/IApiConfiguration";
+import { IApiConfiguration } from "../interfaces/IApiConfiguration";
 import { buildSchema } from "type-graphql";
 import * as path from "path";
 import * as Glob from "glob";

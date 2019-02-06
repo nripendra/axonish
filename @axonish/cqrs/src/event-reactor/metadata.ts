@@ -1,6 +1,6 @@
 import { ClassOf } from "@axonish/core";
 import { forceConvert } from "../util/force-convert";
-import IEvent from "../interfaces/IEvent";
+import { IEvent } from "../interfaces/IEvent";
 
 export type ReactorFunction<TState> = (
   state: TState,

@@ -1,8 +1,8 @@
-import ICqrsConfiguration from "../interfaces/ICqrsConfiguration";
+import { ICqrsConfiguration } from "../interfaces/ICqrsConfiguration";
 import { IServiceConfiguration } from "@axonish/core";
 import { ConnectionOptions } from "pogi";
 import { EventStoreToken } from "../tokens";
-import PgEventStore from "../event-store";
+import { PgEventStore } from "../event-store";
 import { Container } from "typedi";
 
 export class CqrsConfiguration implements ICqrsConfiguration {

@@ -1,9 +1,9 @@
-import IApiConfiguration from "./IApiConfiguration";
+import { IApiConfiguration } from "./IApiConfiguration";
 import { AxonishApolloServer } from "../axonish-api";
 
 export type ServerStartedInfo = { address: string; port: string | number };
 
-export default interface IApiStartup {
+export interface IApiStartup {
   config(apiConfig: IApiConfiguration): void | Promise<void>;
 
   starting(graphqlServer: AxonishApolloServer): void | Promise<void>;

@@ -1,3 +1,5 @@
-import IServiceConfiguration from "../interfaces/IServiceConfiguration";
+import { IServiceConfiguration } from "../interfaces/IServiceConfiguration";
 
-export type ServiceConvention = (serviceConfig: IServiceConfiguration) => void | Promise<void>;
+export type ServiceConvention = (
+  serviceConfig: IServiceConfiguration
+) => void | Promise<void>;

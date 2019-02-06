@@ -1,4 +1,4 @@
-import IEvent from "../interfaces/IEvent";
+import { IEvent } from "../interfaces/IEvent";
 import { Message } from "@axonish/core";
 import { AxonishContext } from "../axonish-context";
 import { IAggregateRoot } from "..";
