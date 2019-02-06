@@ -5,9 +5,9 @@
     "url": "https://github.com/nripendra/axonish"
   },
   "license": "MIT",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "dependencies": {
-    "@axonish/core": "0.2.0",
+    "@axonish/core": "0.3.0",
     "pogi": "^2.5.11",
     "typedi": "^0.8.0"
   }
